@@ -12,6 +12,8 @@ node server.mjs
 
 Abra **http://127.0.0.1:4173**. O servidor aceita somente conexões locais. Para outra porta: `$env:PORT=4174; node server.mjs`.
 
+No Windows, se Node.js não estiver instalado, clique com o botão direito em `abrir-duimp-hub.ps1` e escolha **Executar com PowerShell**. Ele serve a mesma aplicação localmente e abre o navegador. Se a política do Windows bloquear scripts, abra o PowerShell na pasta e execute `powershell -ExecutionPolicy Bypass -File .\abrir-duimp-hub.ps1`.
+
 Módulos ES precisam do servidor HTTP: não abra `index.html` por duplo clique. A fonte Inter e o PDF.js estão incluídos em `vendor/`, com licenças. Não há CDN, telemetria ou dependência de internet no fluxo de demonstração.
 
 ## Demonstrar em aproximadamente 2 minutos

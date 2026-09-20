@@ -1,6 +1,6 @@
 # DUIMP Hub · MVP operacional
 
-Evolução do `duimp-hub-operacional-v8-refinado.html`, preservado integralmente em `reference/`. Frontend local de apoio à análise de uma operação de importação, com fluxo documental, comparação auditável e apresentação offline.
+Evolução do `duimp-hub-operacional-v8.html`, preservado integralmente em `reference/`. Frontend local de apoio à análise de uma operação de importação, com fluxo documental, comparação auditável e apresentação offline.
 
 ## Executar
 

@@ -1,0 +1,2020 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DUIMP Hub — Agente Operacional</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0B1E3A;--navy-2:#122A4E;--paper:#F4F6F9;--card:#FFFFFF;
+  --ink:#101826;--ink-soft:#5B6472;--line:#E2E6ED;--blue:#2A57D6;
+  --blue-soft:#EAF0FE;--green:#1E9E5A;--green-soft:#E8F8EF;
+  --amber:#C77A16;--amber-soft:#FBF0DE;--red:#B23434;--red-soft:#FDEBEC;
+  --gray:#68707C;--gray-soft:#EEF0F3;--radius:10px;
+}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);display:flex;min-height:100%;overflow:hidden}
+button,input,textarea{font:inherit}
+button{transition:.15s ease} body,.chat-head,.chat-input-row,.ctx-col,.page-head,.kpi,.panel,.result-card,.modal,.bubble,.doc-item,.source-item{transition:background-color .2s ease,color .2s ease,border-color .2s ease}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid rgba(42,87,214,.18);outline-offset:1px}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:#C7CEDA;border-radius:8px}
+.sidebar{width:238px;min-width:238px;background:linear-gradient(180deg,var(--navy),var(--navy-2));color:#fff;display:flex;flex-direction:column;padding:22px 16px}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:26px}.brand-mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#3B6BE8,#244BB9);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;box-shadow:0 6px 16px rgba(0,0,0,.18)}
+.brand-name{font-weight:700;font-size:15px}.brand-sub{font-size:10.5px;color:#93A4C4;margin-top:2px}
+.nav{display:flex;flex-direction:column;gap:3px}.nav-item{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:8px;font-size:13px;color:#C7D2E6;cursor:pointer;user-select:none}.nav-item:hover{background:rgba(255,255,255,.06)}.nav-item.active{background:rgba(255,255,255,.11);color:#fff;font-weight:600}.nav-item svg{width:16px;height:16px;opacity:.9}
+.sidebar-mini{margin-top:auto;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.045);padding:11px;border-radius:10px}.sidebar-mini-title{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#8192B4}.sidebar-mini-line{font-size:11.5px;color:#D3DCF0;margin-top:6px;display:flex;gap:6px;align-items:center}.signal{width:7px;height:7px;border-radius:50%;background:#E4A23A}.sidebar-foot{font-size:10.5px;color:#7E8DAE;line-height:1.5;margin-top:12px}
+.main{flex:1;display:flex;min-width:0;height:100vh;height:100dvh}.view{display:none;width:100%;height:100%}.view.active{display:flex}
+.chat-col{flex:1.2;display:flex;flex-direction:column;border-right:1px solid var(--line);min-width:0}.chat-head{padding:14px 22px;border-bottom:1px solid var(--line);background:var(--card);display:flex;align-items:center;justify-content:space-between;gap:14px}.chat-head h1{font-size:15px;margin:0;font-weight:750}.chat-head p{font-size:11.5px;color:var(--ink-soft);margin:3px 0 0}.actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);padding:7px 10px;border-radius:8px;cursor:pointer;font-size:11.5px;font-weight:650}.btn:hover{border-color:#BAC6D8;background:#F9FAFC}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}.btn.primary:hover{background:#234CC0}.btn.soft{color:var(--blue);background:var(--blue-soft);border-color:#D6E1FB}.btn.amber{color:#8A560C;background:var(--amber-soft);border-color:#E7C695}.btn.green{color:#fff;background:var(--green);border-color:var(--green)}.btn:disabled{opacity:.48;cursor:default}
+.chat-body{flex:1;overflow-y:auto;padding:20px 24px 14px;display:flex;flex-direction:column;gap:13px}.msg{max-width:82%;display:flex;flex-direction:column;gap:6px}.msg.agent,.msg.tool,.msg.system{align-self:flex-start}.msg.user{align-self:flex-end}.bubble{padding:11px 14px;border-radius:12px;font-size:13.3px;line-height:1.52}.msg.agent .bubble{background:#fff;border:1px solid var(--line);border-top-left-radius:4px}.msg.user .bubble{background:var(--blue);color:#fff;border-top-right-radius:4px}.msg.system .bubble{background:var(--gray-soft);color:var(--ink-soft);font-size:11.5px;border-radius:8px}.msg.tool .bubble{background:#FBFBFD;border:1px dashed #C7CEDA;color:var(--ink-soft);font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.55;white-space:pre-wrap}.tool-tag{font-size:10px;font-weight:700;letter-spacing:.3px;color:var(--blue);margin-bottom:4px;display:block}
+.choices{display:flex;flex-wrap:wrap;gap:7px;margin-top:1px}.choice-btn{font-size:12.5px;font-weight:550;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}.choice-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-soft)}
+.chat-input-row{padding:12px 22px;border-top:1px solid var(--line);background:#fff;display:flex;gap:9px}.chat-input-row input{flex:1;padding:10px 12px;border-radius:8px;border:1px solid var(--line);font-size:13px}.chat-input-row input:disabled{background:var(--gray-soft)}.chat-input-row button{padding:9px 15px;border-radius:8px;border:none;background:var(--blue);color:#fff;font-weight:650;font-size:12.5px;cursor:pointer}.chat-input-row button:disabled{background:#B9C6E8;cursor:default}
+.ctx-col{width:370px;min-width:370px;background:#fff;display:flex;flex-direction:column;overflow-y:auto}.ctx-section{padding:16px 18px;border-bottom:1px solid var(--line)}.ctx-title{font-size:10.5px;font-weight:750;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.6px;margin:0 0 10px}.ctx-row{display:flex;justify-content:space-between;gap:12px;font-size:12px;padding:5px 0}.ctx-row span:first-child{color:var(--ink-soft)}.ctx-row span:last-child{text-align:right;font-weight:550}.ctx-empty{font-size:11.5px;color:#9AA3B2;font-style:italic}
+.status-pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:650;padding:4px 9px;border-radius:20px}.status-pill.wait{background:var(--gray-soft);color:var(--gray)}.status-pill.run{background:var(--blue-soft);color:var(--blue)}.status-pill.ok{background:var(--green-soft);color:var(--green)}.status-pill.warn{background:var(--amber-soft);color:var(--amber)}.dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.tool-chip{display:flex;align-items:center;gap:8px;font-size:11.7px;padding:5px 0;color:var(--ink-soft)}.tool-chip.done{color:var(--ink)}.tool-chip .mark{width:14px;height:14px;border-radius:50%;border:1.5px solid #C7CEDA;flex-shrink:0}.tool-chip.done .mark{background:var(--green);border-color:var(--green)}.tool-chip.active .mark{border-color:var(--blue);animation:pulse 1s infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.source-item{font-size:11.3px;padding:7px 9px;border-radius:8px;background:var(--paper);margin-bottom:6px;border-left:3px solid var(--line)}.source-item b{display:block;font-size:11.5px;margin-bottom:2px}.source-item.real{border-left-color:var(--green)}.source-item.sim{border-left-color:var(--amber)}.source-item.user{border-left-color:var(--blue)}.source-item.engine{border-left-color:var(--gray)}
+.doc-actions{display:flex;gap:7px;margin-bottom:9px;flex-wrap:wrap}.doc-list{display:flex;flex-direction:column;gap:7px}.doc-item{border:1px solid var(--line);border-radius:8px;padding:8px 9px;background:#FBFCFE;display:flex;align-items:center;gap:8px}.doc-icon{width:28px;height:28px;border-radius:7px;background:var(--blue-soft);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;flex-shrink:0}.doc-icon.generated{background:var(--green-soft);color:var(--green)}.doc-meta{min-width:0;flex:1}.doc-name{font-size:11.5px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.doc-type{font-size:10.5px;color:var(--ink-soft);margin-top:2px}.doc-badge{display:inline-flex;font-size:9.5px;padding:2px 5px;border-radius:10px;background:var(--gray-soft);color:var(--gray);margin-top:4px}.doc-remove{border:none;background:transparent;color:#A7AFBC;cursor:pointer;font-size:14px;padding:2px 4px}.doc-remove:hover{color:var(--red)}
+.pendency-card{margin-top:10px;border:1px solid #ECD1A7;background:#FFF8ED;border-radius:9px;padding:10px}.pendency-card.ok{border-color:#BDE7CE;background:#F1FBF5}.pendency-title{font-size:11.5px;font-weight:750}.pendency-text{font-size:10.7px;color:var(--ink-soft);line-height:1.45;margin-top:4px}.pendency-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.result-card{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;max-width:100%}.result-head{padding:16px 18px;color:#fff}.result-head.direta{background:linear-gradient(120deg,#1E9E5A,#1B8A4F)}.result-head.recinto{background:linear-gradient(120deg,#C77A16,#B06A0F)}.result-head.equilibrado{background:linear-gradient(120deg,#68707C,#565D68)}.result-head .tag{font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;opacity:.85}.result-head h3{margin:4px 0 0;font-size:17px}.score-bars{padding:14px 18px 7px;display:flex;flex-direction:column;gap:10px}.score-row{font-size:12px}.score-row .lbl{display:flex;justify-content:space-between;margin-bottom:4px;color:var(--ink-soft);font-weight:650}.score-track{height:8px;background:var(--gray-soft);border-radius:6px;overflow:hidden}.score-fill{height:100%;border-radius:6px}.score-fill.dir{background:var(--green)}.score-fill.rec{background:var(--amber)}.result-block{padding:11px 18px;border-top:1px solid var(--line)}.result-block h4{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-soft);margin:0 0 7px}.result-block ul{margin:0;padding-left:18px;font-size:12.5px;line-height:1.58}.result-block.alert ul{color:#9A5A05}.result-block.conflict ul{color:var(--red)}.result-actions{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap}.disclaimer{font-size:10.5px;color:#8C96A5;padding:11px 18px;background:var(--paper);border-top:1px solid var(--line);line-height:1.48}
+.workflow-card{border:1px solid #D7E1F5;background:#F7FAFF;border-radius:11px;overflow:hidden}.workflow-head{padding:12px 14px;background:#EEF4FF;border-bottom:1px solid #D7E1F5}.workflow-head strong{font-size:12.5px}.workflow-head div{font-size:10.5px;color:var(--ink-soft);margin-top:3px}.workflow-body{padding:12px 14px}.workflow-row{display:grid;grid-template-columns:135px 1fr;gap:10px;font-size:11.8px;padding:5px 0}.workflow-row span:first-child{color:var(--ink-soft)}.workflow-actions{padding:10px 14px;border-top:1px solid #D7E1F5;display:flex;gap:7px;flex-wrap:wrap}
+.modal-backdrop{position:fixed;inset:0;background:rgba(11,30,58,.46);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}.modal-backdrop.show{display:flex}.modal{width:min(640px,96vw);max-height:86vh;overflow:auto;background:#fff;border-radius:14px;box-shadow:0 18px 60px rgba(0,0,0,.25)}.modal-head{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:center}.modal-head h3{font-size:15px;margin:0}.modal-body{padding:18px}.doc-preview{border:1px solid var(--line);border-radius:10px;background:#FAFBFD;padding:16px;font-size:12px;line-height:1.6}.doc-preview h4{font-size:14px;margin:0 0 12px}.preview-row{display:grid;grid-template-columns:145px 1fr;gap:10px;padding:5px 0;border-bottom:1px dashed #E2E6ED}.preview-row:last-child{border-bottom:0}.preview-row span:first-child{color:var(--ink-soft)}.modal-foot{padding:12px 18px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.page-view{flex:1;display:flex;flex-direction:column;overflow:hidden}.page-head{padding:18px 24px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}.page-head h2{font-size:17px;margin:0}.page-head p{font-size:11.5px;color:var(--ink-soft);margin:4px 0 0}.page-body{padding:22px;overflow:auto;flex:1}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.kpi,.panel{background:#fff;border:1px solid var(--line);border-radius:11px;padding:16px}.kpi-label{font-size:10.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.5px}.kpi-value{font-size:24px;font-weight:800;margin-top:6px}.panel{margin-top:14px}.panel h3{font-size:13px;margin:0 0 12px}.history-table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;border:1px solid var(--line)}.history-table th,.history-table td{font-size:11.5px;text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}.history-table th{color:var(--ink-soft);background:#F8FAFC;text-transform:uppercase;font-size:10px;letter-spacing:.45px}.badge{display:inline-flex;padding:4px 7px;border-radius:20px;font-size:10.5px;font-weight:650}.badge.direta{background:var(--green-soft);color:var(--green)}.badge.recinto{background:var(--amber-soft);color:var(--amber)}.badge.equilibrado{background:var(--gray-soft);color:var(--gray)}.empty-card{padding:28px;text-align:center;color:var(--ink-soft);background:#fff;border:1px dashed #C9D0DB;border-radius:10px;font-size:12px}
+.toast{position:fixed;right:18px;bottom:18px;z-index:60;background:#101826;color:#fff;padding:10px 13px;border-radius:9px;font-size:11.5px;box-shadow:0 8px 30px rgba(0,0,0,.18);opacity:0;transform:translateY(8px);pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:1050px){.ctx-col{width:330px;min-width:330px}.sidebar{width:210px;min-width:210px}}@media(max-width:850px){body{overflow:auto}.sidebar{display:none}.main{height:auto;min-height:100vh}.view.active{flex-direction:column}.chat-col{border-right:0;min-height:68vh}.ctx-col{width:100%;min-width:0;max-height:none;border-top:1px solid var(--line)}.msg{max-width:94%}.grid{grid-template-columns:1fr}}
+
+/* =========================================================
+   TEMA CLARO / ESCURO
+========================================================= */
+.theme-toggle{
+  margin-top:12px;width:100%;display:flex;align-items:center;justify-content:space-between;
+  gap:10px;padding:9px 10px;border-radius:9px;border:1px solid rgba(255,255,255,.13);
+  background:rgba(255,255,255,.055);color:#DCE5F5;cursor:pointer;font-size:11.5px;font-weight:650;
+}
+.theme-toggle:hover{background:rgba(255,255,255,.09)}
+.theme-toggle .theme-icon{font-size:14px;line-height:1}
+.theme-toggle .theme-label{flex:1;text-align:left}
+.theme-toggle .theme-state{font-size:10px;color:#90A2C5;font-weight:550}
+
+html[data-theme="dark"]{
+  --paper:#0F1520;
+  --card:#151D2A;
+  --ink:#EDF2F8;
+  --ink-soft:#A5B0C1;
+  --line:#293446;
+  --blue:#6D92FF;
+  --blue-soft:#182A50;
+  --green:#44C47C;
+  --green-soft:#163727;
+  --amber:#E4A23A;
+  --amber-soft:#3A2A13;
+  --red:#F06A72;
+  --red-soft:#3C1F24;
+  --gray:#9AA5B5;
+  --gray-soft:#202A38;
+}
+
+html[data-theme="dark"] body{background:var(--paper);color:var(--ink)}
+html[data-theme="dark"] .chat-head,
+html[data-theme="dark"] .chat-input-row,
+html[data-theme="dark"] .ctx-col,
+html[data-theme="dark"] .page-head,
+html[data-theme="dark"] .kpi,
+html[data-theme="dark"] .panel,
+html[data-theme="dark"] .result-card,
+html[data-theme="dark"] .modal{background:var(--card);color:var(--ink)}
+html[data-theme="dark"] .msg.agent .bubble,
+html[data-theme="dark"] .choice-btn,
+html[data-theme="dark"] .btn:not(.primary):not(.green):not(.amber):not(.soft),
+html[data-theme="dark"] .history-table{background:#151D2A;color:var(--ink)}
+html[data-theme="dark"] .msg.tool .bubble,
+html[data-theme="dark"] .doc-item,
+html[data-theme="dark"] .doc-preview{background:#111925;color:var(--ink-soft)}
+html[data-theme="dark"] .history-table th{background:#111925;color:var(--ink-soft)}
+html[data-theme="dark"] .history-table td{color:var(--ink)}
+html[data-theme="dark"] .chat-input-row input,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] input{background:#101722;color:var(--ink);border-color:var(--line)}
+html[data-theme="dark"] .chat-input-row input:disabled{background:#1B2533}
+html[data-theme="dark"] .choice-btn:hover{background:var(--blue-soft)}
+html[data-theme="dark"] .btn:hover:not(.primary):not(.green):not(.amber){background:#1C2635}
+html[data-theme="dark"] .pendency-card{background:#312515;border-color:#5A4524}
+html[data-theme="dark"] .pendency-card.ok{background:#153224;border-color:#285E42}
+html[data-theme="dark"] .workflow-card{background:#121C2B;border-color:#2A3E5D}
+html[data-theme="dark"] .workflow-head{background:#17243A;border-color:#2A3E5D}
+html[data-theme="dark"] .source-item{background:#111925}
+html[data-theme="dark"] .modal-backdrop{background:rgba(2,7,15,.72)}
+html[data-theme="dark"] .empty-card{background:var(--card);border-color:#364256}
+html[data-theme="dark"] .disclaimer{background:#101722}
+html[data-theme="dark"] .toast{background:#E9EEF6;color:#101826}
+html[data-theme="dark"] ::-webkit-scrollbar-thumb{background:#3D4A5E}
+html[data-theme="dark"] .preview-row{border-color:#2B3749}
+html[data-theme="dark"] .sidebar{box-shadow:6px 0 24px rgba(0,0,0,.14)}
+
+
+/* ===== V4.1 — TEXTO LIVRE + RESULTADOS + LOG ===== */
+.freeform-box{
+  margin:12px 22px 0;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--card);
+}
+.freeform-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.freeform-title{font-size:11.5px;font-weight:800}
+.freeform-sub{font-size:10.8px;color:var(--ink-soft);line-height:1.45;margin-bottom:8px}
+.freeform-row{display:flex;gap:8px}
+.freeform-row textarea{
+  flex:1;min-height:66px;resize:vertical;border:1px solid var(--line);border-radius:8px;
+  padding:9px 10px;background:var(--card);color:var(--ink);font-size:12px;line-height:1.45;
+}
+.badge-mini{
+  display:inline-flex;align-items:center;padding:3px 7px;border-radius:999px;
+  font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.45px;
+}
+.badge-mini.proto{background:var(--blue-soft);color:var(--blue)}
+.badge-mini.sim{background:var(--amber-soft);color:var(--amber)}
+.badge-mini.real{background:var(--green-soft);color:var(--green)}
+
+.action-log{display:flex;flex-direction:column;gap:6px}
+.log-item{display:flex;gap:7px;font-size:10.5px;line-height:1.4}
+.log-time{font-family:'JetBrains Mono',monospace;color:var(--ink-soft);font-size:9.4px;min-width:40px}
+.log-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);margin-top:4px;flex:0 0 auto}
+
+.result-hero{
+  border-radius:14px;padding:20px;background:linear-gradient(135deg,#15366C,#244FB7);
+  color:#fff;margin-bottom:15px;
+}
+.result-hero .eyebrow{font-size:9.5px;text-transform:uppercase;letter-spacing:.6px;opacity:.75;font-weight:800}
+.result-hero h2{font-size:20px;margin:5px 0 5px}
+.result-hero p{font-size:11.5px;line-height:1.5;margin:0;opacity:.9}
+.result-options-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:14px}
+.option-card{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:16px}
+.option-card.primary{border:2px solid var(--blue)}
+.option-kicker{font-size:9.5px;color:var(--ink-soft);font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.option-card h3{font-size:15px;margin:5px 0}
+.option-metric{font-size:21px;font-weight:850;margin-top:8px}
+.option-reason{font-size:10.8px;color:var(--ink-soft);line-height:1.5;margin-top:9px;padding-top:9px;border-top:1px solid var(--line)}
+.blocker-card{
+  padding:11px 12px;border-radius:10px;border:1px solid #F0D3A7;background:#FFF9F0;
+  color:#7A4A08;font-size:11.2px;line-height:1.45;margin-bottom:14px;
+}
+.score-table{width:100%;border-collapse:collapse}
+.score-table th,.score-table td{padding:9px 10px;border-bottom:1px solid var(--line);font-size:11px;text-align:left}
+.score-table th{font-size:9.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.45px}
+html[data-theme="dark"] .freeform-box,
+html[data-theme="dark"] .option-card{background:var(--card)}
+html[data-theme="dark"] .blocker-card{background:#302313;border-color:#59401F;color:#F0BE72}
+@media(max-width:1100px){.result-options-grid{grid-template-columns:1fr}}
+
+
+/* =========================================================
+   V5 — PRODUTO / OPERAÇÃO / RESULTADOS / DOCUMENTOS
+========================================================= */
+.start-screen{
+  margin:14px 22px 0;padding:18px;border:1px solid var(--line);border-radius:14px;
+  background:linear-gradient(135deg,var(--card),#F8FAFF);
+}
+html[data-theme="dark"] .start-screen{background:linear-gradient(135deg,var(--card),#101827)}
+.start-eyebrow{font-size:9.5px;text-transform:uppercase;letter-spacing:.7px;color:var(--blue);font-weight:850}
+.start-screen h2{font-size:20px;margin:5px 0 5px}
+.start-screen>p{font-size:11.5px;color:var(--ink-soft);line-height:1.5;margin:0 0 13px}
+.start-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.start-action{
+  text-align:left;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:11px;
+  cursor:pointer;color:var(--ink);min-height:84px
+}
+.start-action:hover{border-color:var(--blue);transform:translateY(-1px);box-shadow:0 5px 18px rgba(16,24,38,.06)}
+.start-action strong{display:block;font-size:11.5px;margin:5px 0 3px}
+.start-action span{font-size:10.2px;color:var(--ink-soft);line-height:1.35;display:block}
+.start-icon{font-size:16px}
+.start-demo{
+  margin-top:10px;padding-top:10px;border-top:1px solid var(--line);display:flex;gap:7px;align-items:center;flex-wrap:wrap
+}
+.start-demo-label{font-size:10.5px;color:var(--ink-soft);margin-right:3px}
+
+.operation-card{
+  border:1px solid var(--line);border-radius:10px;padding:11px;background:var(--paper);
+}
+.operation-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.operation-code{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-soft)}
+.operation-status{font-size:13px;font-weight:800;margin-top:2px}
+.operation-status.blocked{color:var(--red)}
+.operation-status.ready{color:var(--green)}
+.operation-status.collecting{color:var(--blue)}
+.operation-status.review{color:var(--amber)}
+.operation-meta{display:grid;grid-template-columns:1fr 1fr;gap:5px 10px;margin-top:9px}
+.operation-meta div{font-size:10.5px}
+.operation-meta span{display:block;color:var(--ink-soft);font-size:9.4px;text-transform:uppercase;letter-spacing:.35px;margin-bottom:1px}
+
+.badge-mini{
+  display:inline-flex;align-items:center;padding:3px 7px;border-radius:999px;
+  font-size:8.8px;font-weight:850;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap
+}
+.badge-mini.real{background:var(--green-soft);color:var(--green)}
+.badge-mini.sim{background:var(--amber-soft);color:var(--amber)}
+.badge-mini.engine{background:var(--gray-soft);color:var(--gray)}
+.badge-mini.external{background:var(--blue-soft);color:var(--blue)}
+.badge-mini.proto{background:var(--blue-soft);color:var(--blue)}
+
+.source-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:2px}
+.source-head b{margin:0!important}
+.doc-status{display:inline-flex;margin-top:4px;padding:2px 6px;border-radius:999px;background:var(--gray-soft);color:var(--gray);font-size:9px;font-weight:750}
+.doc-status.done{background:var(--green-soft);color:var(--green)}
+.doc-status.wait{background:var(--amber-soft);color:var(--amber)}
+.doc-workflow{display:flex;align-items:center;gap:3px;flex-wrap:wrap;margin-top:5px}
+.doc-step{font-size:8.5px;padding:2px 5px;border-radius:5px;background:var(--gray-soft);color:var(--gray)}
+.doc-step.done{background:var(--green-soft);color:var(--green)}
+.doc-step.active{background:var(--blue-soft);color:var(--blue)}
+.doc-arrow{font-size:8px;color:#99A3B2}
+
+.decision-explanation{
+  border:1px solid #D5E0FA;background:var(--blue-soft);border-radius:10px;padding:11px 12px;
+  color:var(--ink);font-size:11.3px;line-height:1.48;margin-bottom:14px
+}
+html[data-theme="dark"] .decision-explanation{border-color:#2B4475}
+.decision-explanation b{display:block;margin-bottom:3px}
+
+.result-options-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+.option-card.risk{border-color:#E8D5B7}
+.option-card.best{border:2px solid var(--blue)}
+.option-tag{margin-top:8px;font-size:9px;color:var(--ink-soft);font-weight:700}
+
+.history-status{
+  display:inline-flex;padding:3px 6px;border-radius:999px;font-size:9.5px;font-weight:750;
+  background:var(--gray-soft);color:var(--gray)
+}
+.history-status.blocked{background:var(--red-soft);color:var(--red)}
+.history-status.ready{background:var(--green-soft);color:var(--green)}
+.history-status.review{background:var(--amber-soft);color:var(--amber)}
+
+.quick-guided{margin-top:8px;display:flex;gap:7px;align-items:center}
+.quick-guided span{font-size:10px;color:var(--ink-soft)}
+
+@media(max-width:1250px){
+  .start-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .result-options-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:850px){
+  .start-actions,.result-options-grid{grid-template-columns:1fr!important}
+}
+
+
+/* =========================================================
+   V6 — MODO APRESENTAÇÃO / COBERTURA / ANTES E DEPOIS / CUSTO
+========================================================= */
+.presentation-banner{
+  display:none;position:fixed;left:50%;top:10px;transform:translateX(-50%);z-index:50;
+  background:#101826;color:#fff;border:1px solid rgba(255,255,255,.14);border-radius:999px;
+  padding:7px 12px;font-size:10px;font-weight:800;box-shadow:0 8px 30px rgba(0,0,0,.2)
+}
+body.presentation-mode .presentation-banner{display:block}
+body.presentation-mode .sidebar-mini,
+body.presentation-mode .sidebar-foot{display:none}
+body.presentation-mode .demo-hide{display:none!important}
+
+.coverage-wrap{margin-top:10px}
+.coverage-top{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:9.5px;color:var(--ink-soft)}
+.coverage-top b{font-size:10px;color:var(--ink)}
+.coverage-track{height:6px;background:var(--gray-soft);border-radius:999px;overflow:hidden;margin-top:5px}
+.coverage-fill{height:100%;background:var(--blue);border-radius:999px}
+.coverage-missing{font-size:9.2px;color:var(--ink-soft);margin-top:5px;line-height:1.35}
+
+.before-after{
+  display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch;margin:14px 0
+}
+.ba-card{border:1px solid var(--line);border-radius:11px;background:var(--card);padding:13px}
+.ba-label{font-size:9px;text-transform:uppercase;letter-spacing:.6px;font-weight:850;color:var(--ink-soft)}
+.ba-status{font-size:13px;font-weight:800;margin:4px 0 6px}
+.ba-list{margin:0;padding-left:16px;font-size:10.5px;line-height:1.5;color:var(--ink-soft)}
+.ba-arrow{display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--blue);font-weight:800}
+
+.audit-panel{margin-top:12px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.audit-toggle{
+  width:100%;display:flex;justify-content:space-between;align-items:center;border:0;background:var(--paper);
+  color:var(--ink);padding:10px 12px;font-size:11px;font-weight:800;cursor:pointer;text-align:left
+}
+.audit-body{display:none;padding:10px 12px;background:var(--card)}
+.audit-body.open{display:block}
+.audit-row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:10.5px}
+.audit-row:last-child{border-bottom:0}
+.audit-row span:first-child{color:var(--ink-soft)}
+.audit-score{font-family:'JetBrains Mono',monospace;font-weight:800}
+
+.estimate-note{
+  margin-top:8px;padding:8px 9px;border:1px dashed #D8B97D;border-radius:8px;background:var(--amber-soft);
+  color:var(--amber);font-size:9.5px;line-height:1.4
+}
+.cost-breakdown{margin-top:9px;padding-top:9px;border-top:1px solid var(--line)}
+.cost-line{display:flex;justify-content:space-between;gap:8px;font-size:10px;padding:3px 0;color:var(--ink-soft)}
+.cost-line b{color:var(--ink)}
+
+.next-action-card{
+  border:1px solid #D7E1F9;background:var(--blue-soft);border-radius:10px;padding:11px 12px;margin-top:12px
+}
+.next-action-card b{display:block;font-size:11px;margin-bottom:3px}
+.next-action-card span{font-size:10.5px;line-height:1.45;color:var(--ink-soft)}
+
+.report-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.error-card{
+  border:1px solid #F0C8CC;background:var(--red-soft);color:var(--red);border-radius:9px;padding:9px 10px;
+  font-size:10.5px;line-height:1.4
+}
+html[data-theme="dark"] .presentation-banner{background:#E7EDF7;color:#111826}
+html[data-theme="dark"] .audit-toggle{background:#111925}
+html[data-theme="dark"] .next-action-card{border-color:#2A4477}
+html[data-theme="dark"] .estimate-note{border-color:#644A20}
+
+@media(max-width:900px){
+  .before-after{grid-template-columns:1fr}
+  .ba-arrow{transform:rotate(90deg)}
+}
+
+
+.cost-scope{
+  display:flex;gap:7px;flex-wrap:wrap;margin:7px 0 10px
+}
+.cost-scope .badge-mini{font-size:8.6px}
+.cost-warning{
+  border:1px solid #F1D3A6;background:var(--amber-soft);color:var(--amber);
+  border-radius:9px;padding:9px 10px;font-size:10px;line-height:1.45;margin-top:9px
+}
+.cost-unit{
+  font-size:9.5px;color:var(--ink-soft);margin-top:2px
+}
+html[data-theme="dark"] .cost-warning{border-color:#634A24}
+
+/* ===== Agente de dúvidas (flutuante, separado da análise) ===== */
+.faq-toggle{position:fixed;right:22px;bottom:22px;z-index:40;display:flex;align-items:center;gap:9px;padding:11px 15px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:var(--navy);color:#fff;font-weight:750;font-size:12.5px;cursor:pointer;box-shadow:0 10px 30px rgba(11,30,58,.28)}
+.faq-toggle svg{width:17px;height:17px}.faq-toggle:hover{background:var(--navy-2);transform:translateY(-1px)}
+.faq-toggle-copy{display:flex;flex-direction:column;align-items:flex-start;line-height:1.1}.faq-toggle-copy small{font-size:8.5px;color:#AFC0DF;margin-top:3px;text-transform:uppercase;letter-spacing:.45px}
+.faq-online-dot{width:7px;height:7px;border-radius:50%;background:#57D48D;box-shadow:0 0 0 3px rgba(87,212,141,.15)}
+.faq-panel{position:fixed;right:22px;bottom:82px;z-index:41;width:430px;max-width:calc(100vw - 32px);height:620px;max-height:calc(100dvh - 120px);background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 22px 70px rgba(0,0,0,.25);display:flex;flex-direction:column;overflow:hidden;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(10px) scale(.985);transform-origin:bottom right;transition:opacity .16s ease,transform .16s ease,visibility .16s}
+.faq-panel.open{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0) scale(1)}
+.faq-head{padding:13px 14px 12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;gap:12px;background:linear-gradient(135deg,var(--card),var(--paper))}
+.faq-head-main{min-width:0}.faq-kicker{font-size:8.8px;color:var(--blue);font-weight:800;letter-spacing:.65px;text-transform:uppercase;margin-bottom:4px}.faq-head b{font-size:14px;display:block}.faq-head span{font-size:10.5px;color:var(--ink-soft);display:block;margin-top:3px;line-height:1.4}
+.faq-head-actions{display:flex;gap:3px}.faq-icon-btn{width:30px;height:30px;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--ink-soft);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px}.faq-icon-btn:hover{background:var(--gray-soft);color:var(--ink);border-color:var(--line)}
+.faq-status-row{padding:8px 12px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--line);background:var(--card);overflow-x:auto;scrollbar-width:none}.faq-status-badge{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;padding:4px 7px;border-radius:20px;background:var(--green-soft);color:var(--green);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.35px}.faq-status-badge.context{background:var(--blue-soft);color:var(--blue)}
+.faq-context{padding:9px 12px;border-bottom:1px solid var(--line);background:var(--paper)}.faq-context-top{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:10.5px}.faq-context-top b{font-size:10.7px}.faq-context-top span{color:var(--ink-soft);text-align:right}.faq-context-detail{font-size:9.8px;color:var(--ink-soft);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.faq-context-empty{font-size:10.3px;color:var(--ink-soft);line-height:1.4}
+.faq-quick-wrap{padding:9px 12px 8px;border-bottom:1px solid var(--line);background:var(--card)}.faq-quick-title{font-size:9px;font-weight:800;color:var(--ink-soft);letter-spacing:.45px;text-transform:uppercase;margin-bottom:6px}.faq-quick{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;scroll-snap-type:x proximity}.faq-chip{white-space:nowrap;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 8px;border-radius:999px;font-size:10.5px;font-weight:600;cursor:pointer;scroll-snap-align:start}.faq-chip:hover{border-color:var(--blue);background:var(--blue-soft);color:var(--blue)}.faq-quick::-webkit-scrollbar,.faq-status-row::-webkit-scrollbar{display:none}
+.faq-body{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px;background:var(--card)}
+.faq-msg{display:flex;flex-direction:column;align-items:flex-start;gap:4px}.faq-msg.user{align-items:flex-end}.faq-msg.system{align-items:center}.faq-bubble{max-width:91%;padding:9px 11px;border-radius:11px;font-size:12.2px;line-height:1.48;background:var(--paper);border:1px solid var(--line);white-space:pre-wrap;overflow-wrap:anywhere}.faq-msg.agent .faq-bubble{border-top-left-radius:4px}.faq-msg.user .faq-bubble{background:var(--blue);color:#fff;border-color:var(--blue);border-top-right-radius:4px}.faq-msg.system .faq-bubble{max-width:96%;padding:6px 9px;border-style:dashed;color:var(--ink-soft);font-size:10.2px;text-align:center}.faq-loading{color:var(--ink-soft);font-style:italic}.faq-msg-meta{display:flex;gap:4px;flex-wrap:wrap;max-width:91%}.faq-meta-tag{font-size:8.2px;font-weight:750;text-transform:uppercase;letter-spacing:.3px;padding:2px 5px;border-radius:10px;background:var(--gray-soft);color:var(--gray)}.faq-meta-tag.context{background:var(--blue-soft);color:var(--blue)}.faq-meta-tag.sim{background:var(--amber-soft);color:var(--amber)}
+.faq-composer{border-top:1px solid var(--line);background:var(--card)}.faq-input-row{display:flex;gap:7px;padding:10px 12px 5px}.faq-input-row input{flex:1;min-width:0;padding:9px 10px;border-radius:8px;border:1px solid var(--line);font-size:12.5px;background:var(--card);color:var(--ink)}.faq-input-row button{padding:8px 12px;border-radius:8px;border:none;background:var(--blue);color:#fff;font-weight:700;font-size:12px;cursor:pointer}.faq-input-row button:disabled{background:#B9C6E8;cursor:default}.faq-composer-hint{padding:0 12px 8px;font-size:8.9px;color:var(--ink-soft);display:flex;justify-content:space-between;gap:8px}.faq-disclaimer{padding:8px 12px;border-top:1px solid var(--line);background:var(--amber-soft);color:var(--amber);font-size:9.2px;line-height:1.4}
+html[data-theme="dark"] .faq-bubble{background:#111925}html[data-theme="dark"] .faq-head{background:linear-gradient(135deg,var(--card),#111925)}html[data-theme="dark"] .faq-chip{background:#111925}html[data-theme="dark"] .faq-context{background:#101722}
+@media(max-width:520px){.faq-panel{right:0;left:0;bottom:0;width:auto;height:min(720px,94dvh);max-height:94dvh;border-radius:16px 16px 0 0;transform-origin:bottom center}.faq-toggle{right:12px;bottom:12px}.faq-context-detail{white-space:normal}.faq-composer-hint span:last-child{display:none}}
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+<div class="presentation-banner" id="presentation-banner">MODO APRESENTAÇÃO · fluxo blindado de demonstração</div>
+<aside class="sidebar">
+  <div class="brand"><div class="brand-mark">DH</div><div><div class="brand-name">DUIMP Hub</div><div class="brand-sub">Agente operacional</div></div></div>
+  <nav class="nav">
+    <div class="nav-item active" data-view="analysis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v12H8l-4 4z"/><path d="M8 9h8M8 13h5"/></svg>Nova análise</div>
+    <div class="nav-item" data-view="history"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Minhas análises</div>
+    <div class="nav-item" data-view="results"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18h16M6 15l4-5 3 3 5-7"/><circle cx="6" cy="15" r="1"/><circle cx="10" cy="10" r="1"/><circle cx="13" cy="13" r="1"/><circle cx="18" cy="6" r="1"/></svg>Resultados</div>
+    <div class="nav-item" data-view="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19h16M6 16V9M11 16V5M16 16v-4"/></svg>Painel</div>
+  </nav>
+
+  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Alternar tema claro e escuro">
+    <span class="theme-icon" id="theme-icon">☾</span>
+    <span class="theme-label">Aparência</span>
+    <span class="theme-state" id="theme-state">Escuro</span>
+  </button>
+
+  <div class="sidebar-mini"><div class="sidebar-mini-title">Modo do protótipo</div><div class="sidebar-mini-line"><span class="signal"></span> Envio a órgão: simulado</div><div class="sidebar-mini-line"><span class="signal" id="logcomex-signal" style="background:#5C8AF0"></span> <span id="logcomex-status-text">Logcomex: verificando conexão…</span></div></div>
+  <div class="sidebar-foot">Porto Hack Santos 2026 · v8<br>O agente pode preparar documentos e simular protocolo, mas não realiza envio oficial neste protótipo.</div>
+</aside>
+
+<main class="main">
+<section class="view active" id="view-analysis">
+  <div class="chat-col">
+    <header class="chat-head">
+      <div><h1>Agente DUIMP Hub</h1><p id="head-sub">Analisa a operação, detecta pendências e ajuda a resolvê-las.</p></div>
+      <div class="actions">
+  <button class="btn" id="new-op-btn">Nova operação</button>
+  <button class="btn primary" id="presentation-btn" onclick="togglePresentationMode()">Modo apresentação</button>
+  <button class="btn soft demo-hide" onclick="runDemo(1)">Demo: retirada</button>
+  <button class="btn amber demo-hide" onclick="runDemo(2)">Demo: pendência</button>
+</div>
+    </header>
+
+    <div class="start-screen" id="start-screen">
+      <div class="start-eyebrow">DUIMP Hub · Agente operacional</div>
+      <h2>O que você precisa resolver agora?</h2>
+      <p>Comece pela tarefa. O agente coleta o contexto, verifica documentos, identifica gargalos e leva a operação até uma comparação de cenários.</p>
+      <div class="start-actions">
+        <button class="start-action" onclick="startProductAction('analyze')"><div class="start-icon">◎</div><strong>Analisar nova operação</strong><span>Descreva o caso livremente ou responda apenas ao que faltar.</span></button>
+        <button class="start-action" onclick="startProductAction('pendency')"><div class="start-icon">⚠</div><strong>Resolver uma pendência</strong><span>Informe o que travou a operação e o agente verifica documentos e próximos passos.</span></button>
+        <button class="start-action" onclick="startProductAction('history')"><div class="start-icon">↺</div><strong>Consultar operação existente</strong><span>Acesse análises salvas, status, pendências e resultados.</span></button>
+        <button class="start-action" onclick="startProductAction('documents')"><div class="start-icon">▤</div><strong>Adicionar documentos</strong><span>Associe Invoice, Packing List, BL e outros arquivos à operação.</span></button>
+      </div>
+      <div class="start-demo">
+        <span class="start-demo-label">Para apresentar:</span>
+        <button class="btn green" onclick="runDemo(3)">▶ Demo completa</button>
+        <button class="btn soft" onclick="runDemo(1)">Demo simples</button>
+      </div>
+    </div>
+
+    <div class="freeform-box" id="freeform-box" style="display:none">
+      <div class="freeform-top">
+        <div class="freeform-title">Descreva a operação do seu jeito</div>
+        <span class="badge-mini proto">Protótipo</span>
+      </div>
+      <div class="freeform-sub">O agente tenta extrair NCM, urgência, órgão, transporte, janela e pendências; depois pergunta apenas o que estiver faltando.</div>
+      <div class="freeform-row">
+        <textarea id="freeform-operation" placeholder="Ex.: Tenho uma importação urgente de medicamento NCM 30049099, transporte programado, aguardando ANVISA e ainda não sei se há janela no terminal."></textarea>
+        <button class="btn primary" id="freeform-analyze-btn">Analisar texto</button>
+      </div>
+      <div class="quick-guided"><span>Prefere começar do zero?</span><button class="btn" id="guided-start-btn">Responder perguntas</button></div>
+    </div>
+
+    <div class="chat-body" id="chat-body"></div>
+    <div class="chat-input-row"><input id="free-input" type="text" placeholder="Responda ou digite uma observação..." disabled><button id="send-btn" disabled>Enviar</button></div>
+  </div>
+
+  <aside class="ctx-col">
+    <div class="ctx-section">
+      <div class="ctx-title">Status da operação</div>
+      <div id="operation-status-card"></div>
+      <div style="margin-top:9px"><span class="status-pill wait" id="status-pill"><span class="dot"></span>Aguardando dados</span></div>
+    </div>
+    <div class="ctx-section"><div class="ctx-title">Contexto da operação</div><div id="ctx-fields"><div class="ctx-empty">Nenhum dado coletado ainda.</div></div></div>
+    <div class="ctx-section">
+      <div class="ctx-title">Documentos e pendências</div>
+      <div class="doc-actions"><button class="btn" id="attach-doc-btn">＋ Adicionar documento</button><button class="btn soft" id="analyze-docs-btn">Analisar documentos</button><input id="doc-input" type="file" multiple hidden></div>
+      <div id="doc-list" class="doc-list"><div class="ctx-empty">Nenhum documento adicionado.</div></div>
+      <div id="pendency-box"></div>
+    </div>
+    <div class="ctx-section"><div class="ctx-title">Ferramentas acionadas</div><div id="ctx-tools">
+      <div class="tool-chip" data-tool="docs"><span class="mark"></span>ler_documentos()</div>
+      <div class="tool-chip" data-tool="anuencia"><span class="mark"></span>pre_check_anuencia()</div>
+      <div class="tool-chip" data-tool="gerar"><span class="mark"></span>gerar_documento()</div>
+      <div class="tool-chip" data-tool="protocolo"><span class="mark"></span>protocolar_documento()</div>
+      <div class="tool-chip" data-tool="logcomex"><span class="mark"></span>consultar_logcomex()</div>
+      <div class="tool-chip" data-tool="custos"><span class="mark"></span>estimar_custos()</div>
+      <div class="tool-chip" data-tool="motor"><span class="mark"></span>analisar_operacao()</div>
+    </div></div>
+    <div class="ctx-section"><div class="ctx-title">Linha de ação do agente</div><div id="ctx-action-log" class="action-log"><div class="ctx-empty">Nenhuma ação executada.</div></div></div>
+    <div class="ctx-section" style="border-bottom:none"><div class="ctx-title">Fontes utilizadas</div><div id="ctx-sources"><div class="ctx-empty">—</div></div></div>
+  </aside>
+</section>
+
+<section class="view" id="view-history"><div class="page-view"><header class="page-head"><div><h2>Minhas análises</h2><p>Histórico salvo neste navegador.</p></div><button class="btn primary" onclick="switchView('analysis');resetChat(true)">＋ Nova análise</button></header><div class="page-body" id="history-body"></div></div></section>
+
+<section class="view" id="view-results"><div class="page-view">
+  <header class="page-head">
+    <div><h2>Resultados</h2><p>Compare custo, velocidade, risco operacional e a melhor opção global.</p></div>
+    <div class="actions">
+      <button class="btn" onclick="switchView('analysis')">Voltar à operação</button>
+      <button class="btn" onclick="exportSummaryReport()">Exportar resumo</button>
+      <button class="btn primary" onclick="reanalyzeAndShowResults()">Reanalisar</button>
+    </div>
+  </header>
+  <div class="page-body" id="results-body"><div class="empty-card">Conclua uma análise para visualizar as opções.</div></div>
+</div></section>
+<section class="view" id="view-dashboard"><div class="page-view"><header class="page-head"><div><h2>Painel de inteligência</h2><p>Resumo das operações salvas no protótipo.</p></div><button class="btn" onclick="renderDashboard()">Atualizar</button></header><div class="page-body" id="dashboard-body"></div></div></section>
+</main>
+
+<div class="modal-backdrop" id="doc-modal">
+  <div class="modal">
+    <div class="modal-head"><h3>Revisão do documento preparado</h3><button class="btn" onclick="closeDocModal()">Fechar</button></div>
+    <div class="modal-body"><div id="doc-preview" class="doc-preview"></div></div>
+    <div class="modal-foot"><button class="btn" onclick="closeDocModal()">Voltar para edição</button><button class="btn green" onclick="approveAndSendDocument()">Aprovar e simular envio</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<button id="faq-toggle" class="faq-toggle" type="button" aria-label="Abrir agente de dúvidas" aria-controls="faq-panel" aria-expanded="false">
+  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5H6l-3 3v-3.5A8.38 8.38 0 0 1 3.5 3.5h9A8.38 8.38 0 0 1 21 11.5z"/></svg>
+  <span class="faq-toggle-copy">Agente de dúvidas<small>offline · base local</small></span>
+  <span class="faq-online-dot" aria-hidden="true"></span>
+</button>
+<aside class="faq-panel" id="faq-panel" role="dialog" aria-modal="false" aria-labelledby="faq-title" aria-hidden="true" inert>
+  <div class="faq-head">
+    <div class="faq-head-main">
+      <div class="faq-kicker">Canal separado da análise</div>
+      <b id="faq-title">Agente de dúvidas</b>
+      <span>Consulta a base local e lê a operação atual sem alterar o fluxo.</span>
+    </div>
+    <div class="faq-head-actions">
+      <button id="faq-clear" class="faq-icon-btn" type="button" aria-label="Limpar memória da conversa" title="Limpar conversa">↺</button>
+      <button id="faq-close" class="faq-icon-btn" type="button" aria-label="Fechar agente de dúvidas" title="Fechar">✕</button>
+    </div>
+  </div>
+  <div class="faq-status-row" aria-label="Modo de funcionamento">
+    <span class="faq-status-badge"><span class="faq-online-dot" aria-hidden="true"></span>Base local</span>
+    <span class="faq-status-badge context">Contexto ao vivo</span>
+    <span class="faq-status-badge context">Memória da sessão</span>
+  </div>
+  <div class="faq-context" id="faq-context"></div>
+  <div class="faq-quick-wrap">
+    <div class="faq-quick-title">Perguntas rápidas</div>
+    <div class="faq-quick" id="faq-quick"></div>
+  </div>
+  <div class="faq-body" id="faq-body" role="log" aria-live="polite" aria-relevant="additions"></div>
+  <div class="faq-composer">
+    <div class="faq-input-row">
+      <input id="faq-input" type="text" maxlength="500" autocomplete="off" aria-label="Digite sua dúvida" placeholder="Pergunte sobre DUIMP ou sobre a operação...">
+      <button id="faq-send" type="button">Enviar</button>
+    </div>
+    <div class="faq-composer-hint"><span>Enter para enviar</span><span>Não altera a análise</span></div>
+  </div>
+  <div class="faq-disclaimer"><b>Protótipo:</b> respostas e estimativas locais apoiam a decisão, mas não são consulta oficial, liberação, anuência ou cotação.</div>
+</aside>
+
+<script>
+
+/* =========================================================
+   TEMA
+========================================================= */
+const THEME_KEY='duimpHubTheme';
+function applyTheme(theme){
+  const selected=theme==='dark'?'dark':'light';
+  document.documentElement.setAttribute('data-theme',selected);
+  try{localStorage.setItem(THEME_KEY,selected)}catch(e){}
+  const icon=document.getElementById('theme-icon');
+  const stateEl=document.getElementById('theme-state');
+  const btn=document.getElementById('theme-toggle');
+  if(icon) icon.textContent=selected==='dark'?'☀':'☾';
+  if(stateEl) stateEl.textContent=selected==='dark'?'Claro':'Escuro';
+  if(btn) btn.setAttribute('aria-label',selected==='dark'?'Ativar tema claro':'Ativar tema escuro');
+}
+function initTheme(){
+  let saved=null;
+  try{saved=localStorage.getItem(THEME_KEY)}catch(e){}
+  const systemDark=window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(saved || (systemDark?'dark':'light'));
+}
+initTheme();
+document.getElementById('theme-toggle')?.addEventListener('click',()=>{
+  const current=document.documentElement.getAttribute('data-theme')||'light';
+  applyTheme(current==='dark'?'light':'dark');
+});
+
+function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]))}
+function normalize(s){return String(s||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function uid(){return 'id_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7)}
+function parseBRL(v){let s=String(v||'').trim();if(!s||/nao sei|não sei|n\/a/i.test(s))return NaN;s=s.replace(/[R$\s]/g,'');if(s.includes(',')&&s.includes('.'))s=s.replace(/\./g,'').replace(',','.');else if(s.includes(','))s=s.replace(',','.');return Number(s.replace(/[^\d.-]/g,''))}
+function formatBRL(n){return Number.isFinite(n)?n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'não informado'}
+function toast(text){const el=document.getElementById('toast');el.textContent=text;el.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),2200)}
+
+const state={id:uid(),op:{},step:0,sources:[],documents:[],waitingFree:false,inputMode:'question',preCheck:null,result:null,finalized:false,documentIssue:null,documentDraft:null,protocol:null,actionLog:[],redirectTimer:null,operationStarted:false,presentationMode:false,beforeSnapshot:null,afterSnapshot:null,costEstimate:null,lastError:null};
+
+const QUESTIONS=[
+{key:'ncm',label:'NCM',text:'Vamos analisar a operação. Qual é o NCM da mercadoria?',type:'free',placeholder:'ex: 30049099',validate:v=>/^\d{8}$/.test(String(v).replace(/\D/g,''))?null:'O NCM deve ter 8 dígitos.',clean:v=>String(v).replace(/\D/g,'')},
+{key:'descricao',label:'Mercadoria',text:'Qual é a descrição resumida da mercadoria?',type:'free',placeholder:'ex: medicamento de demonstração'},
+{key:'escala',label:'Escala da carga',text:'Qual é a escala desta operação?',type:'free',placeholder:'ex: 4 contêineres de 40 pés, 2 de 20 pés ou 8 TEU',shouldAsk:()=>!deriveCargoScale(state.op).known},
+{key:'urgencia',label:'Urgência',text:'Qual é o nível de urgência/prazo desta operação?',type:'choice',options:['Baixa','Média','Alta','Crítica']},
+{key:'anuencia_prevista',label:'Anuência prevista',text:'Existe anuência, fiscalização ou inspeção prevista?',type:'choice',options:['Não','Sim','Ainda não sabemos']},
+{key:'orgao_anuente',label:'Órgão anuente',text:'Qual órgão está envolvido nesta simulação?',type:'choice',options:['ANVISA','MAPA','Outro / não sei'],shouldAsk:()=>normalize(state.op.anuencia_prevista)!=='nao'},
+{key:'pendencia',label:'Pendência impeditiva',text:'Existe alguma pendência impeditiva para retirada neste momento?',type:'choice',options:['Não','Parcialmente / incerta','Sim']},
+{key:'logistica',label:'Logística pronta',text:'A estrutura logística para retirada está pronta?',type:'choice',options:['Sim','Parcialmente','Não']},
+{key:'transporte',label:'Transporte programado',text:'O transporte já está programado?',type:'choice',options:['Sim','Não']},
+{key:'janela',label:'Janela do terminal',text:'A janela/agendamento do terminal está disponível e compatível?',type:'choice',options:['Sim','Parcialmente','Não','Ainda não sabemos']},
+{key:'entreposto',label:'Armazenagem / entreposto',text:'Existe necessidade de armazenagem ou entreposto?',type:'choice',options:['Não','Talvez','Sim']},
+{key:'preparacao',label:'Preparação DUIMP',text:'Como você avalia a preparação interna para a DUIMP?',type:'choice',options:['Baixa','Média','Alta']},
+];
+function nextQuestionIndex(from){let i=from;while(i<QUESTIONS.length&&QUESTIONS[i].shouldAsk&&!QUESTIONS[i].shouldAsk())i++;return i}
+
+/* =========================================================
+   LOGCOMEX — MCP AO VIVO
+   Usa a capability "mcp" do artifact para chamar o conector
+   Logcomex.ai com as credenciais da própria pessoa que está
+   vendo a página. Sem conector conectado, cai num aviso claro
+   em vez de dado inventado.
+========================================================= */
+const LOGCOMEX_MCP_URL='https://platform.logcomex.ai/mcp';
+let _mcpNs=undefined,_logcomexAgentId=null;
+async function getMcp(){if(_mcpNs!==undefined)return _mcpNs;try{_mcpNs=(window.claude&&window.claude.use)?await claude.use('mcp'):null}catch(e){_mcpNs=null}return _mcpNs}
+function extractMcpText(result){try{if(result&&result.payload!==undefined){if(typeof result.payload==='string')return result.payload;if(result.payload&&typeof result.payload.text==='string')return result.payload.text}const blocks=(result&&result.content)||[];const t=blocks.filter(b=>b&&b.type==='text').map(b=>b.text).join('\n');return t||''}catch(e){return ''}}
+async function getLogcomexAgentId(mcp){
+  if(_logcomexAgentId)return _logcomexAgentId;
+  try{
+    const r=await mcp.callTool('Logcomex.ai','list_agents',{},{cache:{staleTime:300000}});
+    const txt=extractMcpText(r);
+    const m=txt.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
+    _logcomexAgentId=m?m[0]:'9a60a4bf-dc9d-4201-90f3-de0cc1d3fc0a';
+  }catch(e){_logcomexAgentId='9a60a4bf-dc9d-4201-90f3-de0cc1d3fc0a'}
+  return _logcomexAgentId;
+}
+function logcomexErrorMessage(code){
+  return ({
+    needs_reauth:'A conexão com a Logcomex expirou. Reconecte em Configurações → Conectores.',
+    server_not_connected:'A Logcomex não está conectada nesta conta. Conecte em Configurações → Conectores para trazer dados reais.',
+    consent_required:'Esta sessão ainda não autorizou a consulta à Logcomex. Tente novamente para permitir o acesso.',
+    not_in_manifest:'A consulta à Logcomex não foi autorizada para esta página.',
+    selection_required:'Há mais de um conector Logcomex disponível — escolha um para continuar.',
+    approval_required:'A política da organização exige aprovação para esta consulta à Logcomex.',
+    blocked_by_policy:'A política da organização bloqueia esta consulta à Logcomex.',
+    tool_error:'O agente Logcomex retornou um erro ao processar esta consulta.',
+    server_unavailable:'A Logcomex está temporariamente indisponível. Tentando novamente mais tarde pode funcionar.',
+  })[code] || 'Não foi possível consultar a Logcomex agora.';
+}
+async function consultarLogcomexReal(ncm,descricao){
+  const clean=String(ncm||'').replace(/\D/g,'');
+  const mcp=await getMcp();
+  if(!mcp)return{real:false,fonte:'Logcomex — modo local',texto:`Este HTML está aberto sem um cliente MCP. Para consultar dados reais, conecte o servidor oficial ${LOGCOMEX_MCP_URL} em um ambiente compatível. A análise continua com os dados locais, sem inventar retorno da Logcomex.`};
+  try{
+    const agentId=await getLogcomexAgentId(mcp);
+    const msg=`Panorama rápido para uma operação de importação do NCM ${clean}${descricao?(' ('+descricao+')'):''}: volume/relevância nas importações brasileiras recentes, principais países de origem, faixa aproximada de valor FOB por operação ou por unidade quando disponível, e exigências/anuência tipicamente associadas a esse NCM. Seja objetivo, isto é um resumo para um painel de apoio à decisão.`;
+    let result=await mcp.callTool('Logcomex.ai','chat_with_agent',{agent_id:agentId,message:msg},{cache:false,signal:AbortSignal.timeout(60000)});
+    let text=extractMcpText(result);
+    const taskMatch=text.match(/task_id\s*[=:"]+\s*"?([a-f0-9-]{36})/i);
+    if(taskMatch){
+      const taskId=taskMatch[1];
+      for(let i=0;i<12;i++){
+        await new Promise(res=>setTimeout(res,6000));
+        let statusRes;
+        try{statusRes=await mcp.callTool('Logcomex.ai','get_task_status',{task_id:taskId},{cache:false})}
+        catch(e){break}
+        const statusText=extractMcpText(statusRes);
+        text=statusText;
+        if(!/ainda processando/i.test(statusText))break;
+      }
+    }
+    return{real:true,fonte:'Logcomex — consulta real via agente contratado (MCP ao vivo)',texto:text||'O agente não retornou conteúdo para esta consulta.'};
+  }catch(err){
+    return{real:false,fonte:'Logcomex — consulta indisponível',texto:logcomexErrorMessage(err&&err.code)};
+  }
+}
+function parseLogcomexBenchmark(texto){
+  if(!texto)return null;
+  const fob=texto.match(/US\$\s*([\d.,]+)\s*milh(?:ão|ões)/i);
+  const unidades=texto.match(/([\d.,]+)\s*milh(?:ão|ões)?\s*(?:de\s*)?unidades/i);
+  const operacoes=texto.match(/([\d.,]+)\s*opera(?:ção|ções)/i);
+  if(!fob)return null;
+  return{fobMilhoes:fob[1],unidades:unidades?unidades[1]:null,operacoes:operacoes?operacoes[1]:null};
+}
+
+function inferDocType(name){const n=normalize(name);if(n.includes('invoice')||n.includes('fatura'))return'Invoice';if(n.includes('packing'))return'Packing List';if(/\bbl\b/.test(n)||n.includes('bill of lading')||n.includes('conhecimento'))return'Conhecimento de carga / BL';if(n.includes('licenca')||n.includes('registro'))return'Licença / registro';if(n.includes('certificado'))return'Certificado';if(n.includes('declaracao')||n.includes('finalidade'))return'Declaração complementar';return'Documento da operação'}
+function fakeExtractedData(type){const base={ncm:state.op.ncm||'—',mercadoria:state.op.descricao||'—'};if(type==='Invoice')return{...base,referencia:'INV-DEMO-2409',valor:'US$ 18.450,00',importador:'Importadora Demo Ltda.'};if(type==='Packing List')return{...base,volumes:'12 volumes',peso:'486 kg',referencia:'PL-DEMO-2409'};if(type==='Conhecimento de carga / BL')return{...base,referencia:'BL-DEMO-88931',porto:'Santos'};return base}
+async function addDocument(file,generated=false,generatedData=null){
+  addActionLog(generated?'Documento gerado pelo agente.':'Documento adicionado à operação.');
+  const type=generatedData?.type||inferDocType(file.name);
+  const doc={
+    id:uid(),name:file.name,type,size:file.size||0,generated,
+    extracted:generatedData?.extracted||{},registeredAt:new Date().toISOString(),
+    status:generated?'Aguardando revisão':'Registrado',extractionMode:generated?'engine':'filename'
+  };
+  state.documents.push(doc);renderDocuments();renderOperationStatus();
+
+  if(generated){
+    addSource('engine','Documento gerado pelo agente',`${doc.type}: ${doc.name}`);
+    return;
+  }
+
+  addSource('user','Documento enviado pelo usuário',`${doc.type}: ${doc.name}`);
+  addMsg('agent',`Recebi <b>${escapeHtml(doc.name)}</b>. Vou tentar ler o conteúdo e aproveitar os dados que já existem, para evitar perguntas desnecessárias.`);
+
+  try{
+    const text=await extractFileText(file);
+    if(text){
+      doc.extracted={...fakeExtractedData(type),...fieldsFromFileText(text)};
+      doc.status='Lido';doc.extractionMode='real';
+      markTool('docs','done');
+      addToolMsg('ler_documentos() — LEITURA NO NAVEGADOR',`Arquivo: ${doc.name}\nTexto extraído: ${text.length} caracteres\nCampos: ${JSON.stringify(doc.extracted)}`);
+      addActionLog(`Conteúdo de "${doc.name}" lido no navegador.`);
+      if(doc.extracted.ncm&&!state.op.ncm){
+        state.op.ncm=doc.extracted.ncm;
+        addMsg('agent',`Encontrei o NCM <b>${escapeHtml(doc.extracted.ncm)}</b> no arquivo e já associei à operação.`);
+      }
+    }else{
+      doc.extracted=fakeExtractedData(type);doc.status='Registrado';doc.extractionMode='sim';
+      addMsg('agent',`Não consegui ler o conteúdo de <b>${escapeHtml(doc.name)}</b> neste navegador. O arquivo continua registrado e você pode seguir normalmente; na versão integrada, um serviço de leitura documental faria essa etapa.`);
+      addToolMsg('ler_documentos() — FALLBACK DO PROTÓTIPO',`Arquivo registrado sem extração de texto. Nenhuma etapa da operação foi bloqueada.`);
+    }
+  }catch(e){
+    state.lastError=String(e);
+    doc.status='Registrado';doc.extractionMode='sim';
+    addMsg('agent',`<div class="error-card"><b>Não consegui processar este arquivo.</b><br>Ele foi mantido na operação. Você pode continuar manualmente ou tentar outro arquivo.</div>`);
+  }
+  renderDocuments();renderCtxFields();renderOperationStatus();
+}
+function removeDocument(id){state.documents=state.documents.filter(d=>d.id!==id);renderDocuments();renderPendency()}
+function hasDocType(type){return state.documents.some(d=>normalize(d.type).includes(normalize(type)))}
+function renderDocuments(){
+  const el=document.getElementById('doc-list');
+  if(!state.documents.length){el.innerHTML='<div class="ctx-empty">Nenhum documento adicionado.</div>';return}
+  el.innerHTML=state.documents.map(d=>{
+    const mode=d.generated?['engine','Gerado pelo agente']:d.extractionMode==='real'?['real','Leitura real']:['sim','Protótipo'];
+    const statusClass=['Lido','Enviado (simulado)','Aprovado'].includes(d.status)?'done':d.status==='Aguardando revisão'?'wait':'';
+    const stepRead=d.extractionMode==='real'||d.generated;
+    const stepReview=d.generated;
+    const stepSent=d.status==='Enviado (simulado)';
+    return `<div class="doc-item">
+      <div class="doc-icon ${d.generated?'generated':''}">${d.generated?'AI':'DOC'}</div>
+      <div class="doc-meta">
+        <div class="doc-name">${escapeHtml(d.name)}</div>
+        <div class="doc-type">${escapeHtml(d.type)} <span class="badge-mini ${mode[0]}" style="margin-left:4px">${mode[1]}</span></div>
+        <span class="doc-status ${statusClass}">${escapeHtml(d.status||'Registrado')}</span>
+        <div class="doc-workflow">
+          <span class="doc-step done">Detectado</span><span class="doc-arrow">→</span>
+          <span class="doc-step ${stepRead?'done':''}">Lido</span><span class="doc-arrow">→</span>
+          <span class="doc-step ${d.status==='Aguardando revisão'?'active':stepReview?'done':''}">Revisão</span><span class="doc-arrow">→</span>
+          <span class="doc-step ${stepSent?'done':''}">Enviado</span>
+        </div>
+      </div>
+      <button class="doc-remove" onclick="removeDocument('${d.id}')">×</button>
+    </div>`;
+  }).join('');
+}
+
+function analyzeDocuments(showChat=true){
+  addActionLog('Agente analisou os documentos da operação.');
+  markTool('docs','active');setStatus('run','Analisando documentos...');
+  setTimeout(()=>{
+    markTool('docs','done');
+    const orgao=state.op.orgao_anuente||((String(state.op.ncm||'').startsWith('30'))?'ANVISA':'Órgão a confirmar');
+    const required=['Invoice','Packing List','Declaração complementar'];
+    const missing=required.filter(r=>!hasDocType(r));
+    state.documentIssue=missing.length
+      ? {orgao,missing,canGenerate:missing.includes('Declaração complementar'),status:'PENDÊNCIA DOCUMENTAL'}
+      : {orgao,missing:[],canGenerate:false,status:'CHECKLIST DOCUMENTAL COMPLETO'};
+    state.preCheck=preCheckAnuencia(orgao);
+    renderPendency();renderOperationStatus();
+    if(showChat){
+      const lines=required.map(r=>`${hasDocType(r)?'✓':'✗'} ${r}`).join('\n');
+      addToolMsg('ler_documentos() + pre_check_anuencia() — SIMULAÇÃO',`Órgão: ${orgao}\n${lines}\n\n${missing.length?'Pendências documentais encontradas.':'Nenhuma pendência documental simulada encontrada.'}`);
+      addSource('sim','Pré-check documental',' — requisitos de demonstração, não substituem o órgão competente.');
+    }
+    setStatus(missing.length?'warn':'ok',missing.length?'Pendência documental':'Documentos conferidos');
+  },450);
+}
+function preCheckAnuencia(orgao){const items=[{ok:hasDocType('Invoice'),txt:'Invoice'},{ok:hasDocType('Packing List'),txt:'Packing List'},{ok:hasDocType('Declaração complementar'),txt:'Declaração complementar de finalidade (modelo simulado)'}];return{orgao,status:items.every(i=>i.ok)?'CHECKLIST SIMULADO COMPLETO':'PENDÊNCIA ENCONTRADA',itens:items,pendencia_impeditiva:items.some(i=>!i.ok),texto:'Simulação de pré-check documental. Não corresponde a anuência oficial.'}}
+function renderPendency(){const el=document.getElementById('pendency-box');if(!state.documentIssue){el.innerHTML='';return}if(!state.documentIssue.missing.length){el.innerHTML='<div class="pendency-card ok"><div class="pendency-title">✓ Pendência documental resolvida</div><div class="pendency-text">O checklist simulado não encontrou documentos faltantes.</div></div>';return}const missing=state.documentIssue.missing.map(x=>escapeHtml(x)).join(', ');el.innerHTML=`<div class="pendency-card"><div class="pendency-title">⚠ ${escapeHtml(state.documentIssue.status)}</div><div class="pendency-text">Faltando: ${missing}. O agente pode preparar documentos preenchíveis; autorizações oficiais continuam dependendo do órgão.</div><div class="pendency-actions">${state.documentIssue.canGenerate?'<button class="btn amber" onclick="startResolveDocument()">Resolver com o agente</button>':''}<button class="btn" onclick="analyzeDocuments(true)">Reanalisar</button></div></div>`}
+
+function startResolveDocument(){if(!state.beforeSnapshot)state.beforeSnapshot=captureOperationSnapshot('Antes');renderOperationStatus();if(!state.documentIssue?.canGenerate)return;addMsg('agent','Consigo preparar a <b>Declaração complementar de finalidade</b> usando os dados que já estão na operação e nos documentos. Já aproveitei NCM, mercadoria, referência da Invoice e volumes do Packing List. Falta apenas uma informação: <b>qual é a finalidade de uso/importação desta mercadoria?</b>');state.inputMode='document_purpose';state.waitingFree=true;const inp=document.getElementById('free-input');inp.disabled=false;inp.placeholder='ex: uso hospitalar / revenda / amostra...';inp.value='';inp.focus();document.getElementById('send-btn').disabled=false;setStatus('run','Aguardando dado para preencher documento')}
+function generateDocumentDraft(purpose){addActionLog('Documento pendente preparado pelo agente.');markTool('gerar','active');setStatus('run','Gerando documento...');setTimeout(()=>{const invoice=state.documents.find(d=>d.type==='Invoice');const packing=state.documents.find(d=>d.type==='Packing List');state.documentDraft={status:'Aguardando revisão',type:'Declaração complementar',title:'Declaração complementar de finalidade — MODELO SIMULADO',orgao:state.documentIssue?.orgao||state.op.orgao_anuente||'Órgão a confirmar',ncm:state.op.ncm||'—',mercadoria:state.op.descricao||'—',importador:invoice?.extracted?.importador||'Importador não informado',invoice:invoice?.extracted?.referencia||invoice?.name||'—',packing:packing?.extracted?.referencia||packing?.name||'—',volumes:packing?.extracted?.volumes||'—',finalidade:purpose,observacao:'Documento preparado automaticamente com dados da operação. Modelo exclusivamente demonstrativo.'};markTool('gerar','done');addSource('engine','Documento preparado pelo agente',' — preenchido com dados disponíveis na operação.');addMsg('agent','Preparei o documento usando os dados já disponíveis. <b>Você precisa revisar e aprovar antes de qualquer envio.</b>');addDocumentPreviewCard();renderOperationStatus();setStatus('warn','Documento aguardando aprovação')},500)}
+function addDocumentPreviewCard(){const d=state.documentDraft;addMsg('agent',`<div class="workflow-card"><div class="workflow-head"><strong>Documento pronto para revisão</strong><div>${escapeHtml(d.title)}</div></div><div class="workflow-body"><div class="workflow-row"><span>Órgão</span><b>${escapeHtml(d.orgao)}</b></div><div class="workflow-row"><span>NCM</span><b>${escapeHtml(d.ncm)}</b></div><div class="workflow-row"><span>Mercadoria</span><b>${escapeHtml(d.mercadoria)}</b></div><div class="workflow-row"><span>Finalidade</span><b>${escapeHtml(d.finalidade)}</b></div></div><div class="workflow-actions"><button class="btn primary" onclick="openDocModal()">Revisar documento</button><button class="btn green" onclick="approveAndSendDocument()">Aprovar e simular envio</button></div></div>`)}
+function openDocModal(){if(!state.documentDraft)return;const d=state.documentDraft;document.getElementById('doc-preview').innerHTML=`<h4>${escapeHtml(d.title)}</h4><div class="preview-row"><span>Destinatário</span><b>${escapeHtml(d.orgao)}</b></div><div class="preview-row"><span>Importador</span><b>${escapeHtml(d.importador)}</b></div><div class="preview-row"><span>NCM</span><b>${escapeHtml(d.ncm)}</b></div><div class="preview-row"><span>Mercadoria</span><b>${escapeHtml(d.mercadoria)}</b></div><div class="preview-row"><span>Invoice de referência</span><b>${escapeHtml(d.invoice)}</b></div><div class="preview-row"><span>Packing List</span><b>${escapeHtml(d.packing)}</b></div><div class="preview-row"><span>Volumes</span><b>${escapeHtml(d.volumes)}</b></div><div class="preview-row"><span>Finalidade declarada</span><b>${escapeHtml(d.finalidade)}</b></div><div style="margin-top:14px;padding:10px;background:#FFF8ED;border-radius:8px;color:#8A560C;font-size:10.8px"><b>Protótipo:</b> este é um modelo simulado. Não é um formulário oficial da ANVISA, MAPA ou Siscomex.</div>`;document.getElementById('doc-modal').classList.add('show')}
+function closeDocModal(){document.getElementById('doc-modal').classList.remove('show')}
+function approveAndSendDocument(){if(!state.documentDraft)return;addActionLog('Usuário aprovou o documento para envio simulado.');closeDocModal();markTool('protocolo','active');setStatus('run','Simulando protocolo...');addMsg('agent','Aprovação registrada. Vou <b>simular</b> o envio ao órgão. Nenhum dado será transmitido para ANVISA, MAPA ou Siscomex neste protótipo.');setTimeout(()=>{const protocol=`DEMO-${normalize(state.documentDraft.orgao).includes('anvisa')?'ANVISA':normalize(state.documentDraft.orgao).includes('mapa')?'MAPA':'ORGAO'}-${String(Date.now()).slice(-6)}`;state.protocol={id:protocol,status:'ENVIADO — SIMULAÇÃO',at:new Date().toISOString()};renderOperationStatus();addDocument({name:'declaracao_complementar_gerada.pdf',size:0},true,{type:'Declaração complementar',extracted:{ncm:state.documentDraft.ncm,mercadoria:state.documentDraft.mercadoria,finalidade:state.documentDraft.finalidade,protocolo:protocol}});markTool('protocolo','done');addToolMsg('protocolar_documento() — SIMULAÇÃO',`Status: ENVIADO (SIMULADO)\nProtocolo: ${protocol}\nÓrgão: ${state.documentDraft.orgao}\n\nNenhum envio real foi realizado.`);addSource('sim','Protocolo simulado',protocol);state.op.pendencia='Não';state.afterSnapshot=captureOperationSnapshot('Depois');state.documentDraft=null;analyzeDocuments(false);setTimeout(()=>{addMsg('agent','A pendência documental foi resolvida <b>na simulação</b>. Vou reavaliar a operação com o novo status.');state.finalized=false;finalize(true)},650)},700)}
+
+function analisarOperacao(op){let direta=0,recinto=0;const fatores=[],conflitos=[],alertas=[],faltantes=[];const u=normalize(op.urgencia);if(u==='baixa'){recinto+=1;fatores.push('Urgência baixa reduz a pressão por retirada imediata.')}else if(u==='media'){direta+=1;recinto+=1;fatores.push('Urgência média não diferencia os caminhos.')}else if(u==='alta'){direta+=2;fatores.push('Urgência alta favorece rapidez na retirada.')}else if(u==='critica'){direta+=3;fatores.push('Urgência crítica favorece rapidez na retirada.')}else faltantes.push('urgência');const p=normalize(op.pendencia);if(p==='nao'){direta+=2;fatores.push('Não há pendência impeditiva informada no momento.')}else if(p.startsWith('parcial')){recinto+=1;conflitos.push('A pendência está incerta/parcial.')}else if(p==='sim'){recinto+=3;alertas.push('Existe pendência impeditiva informada.')}else faltantes.push('pendência impeditiva');const l=normalize(op.logistica);if(l==='sim'){direta+=3;fatores.push('Estrutura logística pronta.')}else if(l.startsWith('parcial')){direta+=1;recinto+=1;conflitos.push('Logística parcialmente pronta.')}else if(l==='nao'){recinto+=3;fatores.push('Estrutura logística não pronta.')}else faltantes.push('logística');const t=normalize(op.transporte);if(t==='sim'){direta+=2;fatores.push('Transporte programado.')}else if(t==='nao'){recinto+=2;fatores.push('Transporte não programado.')}else faltantes.push('transporte');const j=normalize(op.janela);if(j==='sim'){direta+=3;fatores.push('Janela/agendamento disponível.')}else if(j.startsWith('parcial')){direta+=1;recinto+=1;conflitos.push('Janela parcialmente compatível.')}else if(j==='nao'){recinto+=3;fatores.push('Janela indisponível.')}else if(j.includes('ainda nao sabemos')){recinto+=1;alertas.push('Janela ainda não confirmada.')}else faltantes.push('janela');const e=normalize(op.entreposto);if(e==='nao'){direta+=1;fatores.push('Sem necessidade de entreposto.')}else if(e==='talvez'){recinto+=1;conflitos.push('Possível necessidade de armazenagem.')}else if(e==='sim'){recinto+=3;conflitos.push('Necessidade de armazenagem/entreposto.')}else faltantes.push('entreposto');if(normalize(op.custos_disponiveis)==='sim'){const cd=parseBRL(op.custo_direta),cr=parseBRL(op.custo_recinto);if(Number.isFinite(cd)&&Number.isFinite(cr)&&cd>0&&cr>0){const diff=Math.abs(cd-cr)/Math.max(cd,cr);if(diff>=.05&&diff<.15){cd<cr?direta++:recinto++}else if(diff>=.15){cd<cr?direta+=2:recinto+=2}fatores.push(`Custos estimados: retirada ${formatBRL(cd)} vs. recinto ${formatBRL(cr)}.`)}}else alertas.push('Custos não foram considerados.');if(normalize(op.preparacao)==='baixa')alertas.push('Baixa preparação para DUIMP informada.');const urgAlta=['alta','critica'].includes(u);if(urgAlta){if(l!=='sim')conflitos.push('Urgência alta sem logística plenamente pronta.');if(t!=='sim')conflitos.push('Urgência alta sem transporte programado.');if(j!=='sim')conflitos.push('Urgência alta com janela indisponível ou incerta.')}let diff=direta-recinto,abs=Math.abs(diff),vencedor,resultado;if(abs>=4){vencedor=diff>0?'direta':'recinto';resultado=`Maior compatibilidade: ${vencedor==='direta'?'Retirada direta':'Uso de recinto'}`}else if(abs>=2){vencedor=diff>0?'direta':'recinto';resultado=`Tendência para: ${vencedor==='direta'?'Retirada direta':'Uso de recinto'}`}else{vencedor='equilibrado';resultado='Cenários equilibrados — análise adicional recomendada'}if(vencedor==='direta'&&(p==='sim'||e==='sim'||state.preCheck?.pendencia_impeditiva)){vencedor='equilibrado';resultado='Operação bloqueada por pendência — resolver antes de decidir';conflitos.push('Uma condição crítica impede tratar a pontuação de retirada como recomendação forte.')}return{score_direta:direta,score_recinto:recinto,resultado,vencedor,fatores,conflitos,alertas,faltantes}}
+
+const chatBody=document.getElementById('chat-body');function scrollBottom(){chatBody.scrollTop=chatBody.scrollHeight}function addMsg(role,html){const wrap=document.createElement('div');wrap.className='msg '+role;wrap.innerHTML=`<div class="bubble">${html}</div>`;chatBody.appendChild(wrap);scrollBottom();return wrap}function addSafeMsg(role,text){addMsg(role,escapeHtml(text))}function addToolMsg(tag,text){const wrap=document.createElement('div');wrap.className='msg tool';const bubble=document.createElement('div');bubble.className='bubble';const span=document.createElement('span');span.className='tool-tag';span.textContent=tag;bubble.appendChild(span);bubble.appendChild(document.createTextNode(text));wrap.appendChild(bubble);chatBody.appendChild(wrap);scrollBottom()}function addChoices(options,onPick){const wrap=document.createElement('div');wrap.className='choices';options.forEach(opt=>{const b=document.createElement('button');b.className='choice-btn';b.textContent=opt;b.onclick=()=>{wrap.querySelectorAll('button').forEach(x=>x.disabled=true);wrap.style.opacity=.55;onPick(opt)};wrap.appendChild(b)});chatBody.appendChild(wrap);scrollBottom()}function setStatus(kind,text){const el=document.getElementById('status-pill');el.className='status-pill '+kind;el.innerHTML=`<span class="dot"></span>${escapeHtml(text)}`}function renderCtxFields(){
+  const el=document.getElementById('ctx-fields');
+  const entries=Object.entries(state.op).filter(([k])=>!['custo_direta','custo_recinto'].includes(k));
+  if(!entries.length)el.innerHTML='<div class="ctx-empty">Nenhum dado coletado ainda.</div>';
+  else{
+    const map=Object.fromEntries(QUESTIONS.map(q=>[q.key,q.label]));
+    el.innerHTML=entries.map(([k,v])=>`<div class="ctx-row"><span>${escapeHtml(map[k]||k)}</span><span>${escapeHtml(v)}</span></div>`).join('');
+  }
+  renderOperationStatus();
+}function markTool(name,status){const chip=document.querySelector(`.tool-chip[data-tool="${name}"]`);if(!chip)return;chip.classList.remove('active');if(status==='active')chip.classList.add('active');if(status==='done'){chip.classList.remove('active');chip.classList.add('done')}}function addSource(kind,label,text=''){
+  state.sources.push({kind,label,text});
+  const el=document.getElementById('ctx-sources');
+  if(!el)return;
+  el.innerHTML=state.sources.map(s=>{
+    const badge=badgeForSource(s.kind);
+    return `<div class="source-item ${escapeHtml(s.kind)}">
+      <div class="source-head"><b>${escapeHtml(s.label)}</b><span class="badge-mini ${badge[0]}">${badge[1]}</span></div>
+      ${escapeHtml(s.text)}
+    </div>`;
+  }).join('');
+}
+
+function askNext(){state.step=nextQuestionIndex(state.step);if(state.step>=QUESTIONS.length){finalize();return}const q=QUESTIONS[state.step];addSafeMsg('agent',q.text);if(q.type==='choice'){state.waitingFree=false;document.getElementById('free-input').disabled=true;document.getElementById('send-btn').disabled=true;addChoices(q.options,opt=>answer(q,opt))}else{state.inputMode='question';state.waitingFree=true;const inp=document.getElementById('free-input');inp.disabled=false;inp.placeholder=q.placeholder||'';inp.value='';inp.focus();document.getElementById('send-btn').disabled=false}}
+function answer(q,value){
+  const cleaned=q.clean?q.clean(value):value;
+  if(q.validate){
+    const error=q.validate(cleaned);
+    if(error){
+      addSafeMsg('agent',error);state.waitingFree=true;
+      document.getElementById('free-input').disabled=false;
+      document.getElementById('send-btn').disabled=false;
+      return;
+    }
+  }
+  addSafeMsg('user',cleaned);
+  state.op[q.key]=cleaned;
+  renderCtxFields();
+  addActionLog(`${q.label}: ${cleaned}`);
+  state.step++;
+  runSideEffects(q.key,cleaned,()=>setTimeout(askNext,180));
+}
+function runSideEffects(key,value,done){
+  if(key==='ncm'){
+    markTool('logcomex','active');setStatus('run','Consultando Logcomex em tempo real...');
+    consultarLogcomexReal(value,state.op.descricao).then(r=>{
+      markTool('logcomex','done');
+      addToolMsg(r.real?'consultar_logcomex() — MCP AO VIVO':'consultar_logcomex()',r.texto);
+      addSource(r.real?'real':'sim',r.fonte,r.real?' — dado obtido agora via MCP, com as credenciais desta sessão.':'');
+      state.logcomexData=r;
+      state.logcomexBenchmark=r.real?parseLogcomexBenchmark(r.texto):null;
+      setStatus('wait','Aguardando dados');
+      done();
+    }).catch(()=>{markTool('logcomex','done');setStatus('wait','Aguardando dados');done()});
+    return;
+  }
+  if(key==='orgao_anuente'){if(state.documents.length){analyzeDocuments(true);setTimeout(done,550);return}}
+  done();
+}
+function finalize(isReanalysis=false){
+  if(state.finalized&&!isReanalysis)return;
+  state.finalized=true;
+  document.getElementById('free-input').disabled=true;
+  document.getElementById('send-btn').disabled=true;
+  document.getElementById('head-sub').textContent=isReanalysis?'Operação reavaliada':'Análise concluída';
+
+  if(normalize(state.op.anuencia_prevista)!=='nao'&&state.documents.length)analyzeDocuments(false);
+
+  markTool('custos','active');
+  state.costEstimate=estimarCustos(state.op);
+  setTimeout(()=>markTool('custos','done'),180);
+  addSource('engine','Estimador de custo operacional',' — faixa ilustrativa calculada pelo protótipo, não é cotação.');
+
+  markTool('motor','active');
+  setStatus('run',isReanalysis?'Reavaliando operação...':'Analisando cenários...');
+  addMsg('agent',isReanalysis
+    ?'Atualizei a operação. Vou recalcular os cenários e o gasto operacional estimado.'
+    :'Já tenho contexto suficiente. Vou comparar os caminhos, estimar o gasto operacional e explicar o que mais pesa na decisão.');
+  addActionLog(isReanalysis?'Operação enviada para reanálise.':'Motor de análise iniciado.');
+
+  setTimeout(()=>{
+    const op={...state.op};
+    if(state.preCheck?.pendencia_impeditiva&&normalize(op.pendencia)!=='sim')op.pendencia='Parcialmente / incerta';
+
+    const r=analisarOperacao(op);
+    state.result=r;
+    markTool('motor','done');
+    addSource('engine','Motor DUIMP Hub',' — regras heurísticas do protótipo.');
+    setStatus(r.vencedor==='equilibrado'?'warn':'ok',isReanalysis?'Operação reavaliada':'Análise concluída');
+
+    if(isReanalysis){
+      state.afterSnapshot=captureOperationSnapshot('Depois');
+    }else if(!state.beforeSnapshot){
+      state.beforeSnapshot=captureOperationSnapshot('Antes');
+    }
+
+    renderResult(r,isReanalysis);
+    renderResultsPage();
+    renderOperationStatus();
+    addActionLog('Comparação de cenários concluída.');
+
+    clearTimeout(state.redirectTimer);
+    addMsg('agent','Pronto. Organizei o resultado por <b>custo estimado</b>, <b>velocidade</b>, <b>risco</b> e <b>melhor equilíbrio</b>. Vou abrir os Resultados.');
+    state.redirectTimer=setTimeout(()=>switchView('results'),state.presentationMode?450:900);
+  },550);
+}
+function renderResult(r,isReanalysis=false){const scale=Math.max(r.score_direta,r.score_recinto,14),pctD=Math.min(100,Math.round(r.score_direta/scale*100)),pctR=Math.min(100,Math.round(r.score_recinto/scale*100)),headClass=r.vencedor==='direta'?'direta':r.vencedor==='recinto'?'recinto':'equilibrado';let html=`<div class="result-card"><div class="result-head ${headClass}"><div class="tag">${isReanalysis?'Resultado após resolução':'Resultado do motor estruturado'}</div><h3>${escapeHtml(r.resultado)}</h3></div><div class="score-bars"><div class="score-row"><div class="lbl"><span>Compatibilidade — Retirada direta</span><span>${r.score_direta} pts</span></div><div class="score-track"><div class="score-fill dir" style="width:${pctD}%"></div></div></div><div class="score-row"><div class="lbl"><span>Compatibilidade — Uso de recinto</span><span>${r.score_recinto} pts</span></div><div class="score-track"><div class="score-fill rec" style="width:${pctR}%"></div></div></div></div>`;if(r.fatores.length)html+=`<div class="result-block"><h4>Fatores considerados</h4><ul>${r.fatores.map(f=>`<li>${escapeHtml(f)}</li>`).join('')}</ul></div>`;if(r.conflitos.length)html+=`<div class="result-block conflict"><h4>Conflitos identificados</h4><ul>${r.conflitos.map(f=>`<li>${escapeHtml(f)}</li>`).join('')}</ul></div>`;if(r.alertas.length)html+=`<div class="result-block alert"><h4>Alertas</h4><ul>${r.alertas.map(f=>`<li>${escapeHtml(f)}</li>`).join('')}</ul></div>`;html+=`<div class="result-actions">${state.documentIssue?.canGenerate&&state.documentIssue?.missing?.length?'<button class="btn amber" onclick="startResolveDocument()">Resolver pendência documental</button>':''}<button class="btn primary" onclick="saveCurrentAnalysis()">Salvar análise</button><button class="btn" onclick="resetChat(true)">Nova operação</button></div><div class="disclaimer">O DUIMP Hub é uma ferramenta de apoio à decisão. O pré-check, geração de documento e protocolo são simulados neste protótipo. Nenhum envio oficial é realizado.</div></div>`;addMsg('agent',html)}
+
+document.getElementById('send-btn').addEventListener('click',submitFree);document.getElementById('free-input').addEventListener('keydown',e=>{if(e.key==='Enter')submitFree()});function submitFree(){if(!state.waitingFree)return;const inp=document.getElementById('free-input'),val=inp.value.trim();if(!val)return;state.waitingFree=false;inp.disabled=true;document.getElementById('send-btn').disabled=true;if(state.inputMode==='document_purpose'){addSafeMsg('user',val);state.inputMode='question';generateDocumentDraft(val);return}answer(QUESTIONS[state.step],val)}
+
+document.getElementById('attach-doc-btn').addEventListener('click',()=>document.getElementById('doc-input').click());document.getElementById('doc-input').addEventListener('change',e=>{[...e.target.files].forEach(file=>addDocument(file));e.target.value='';setTimeout(()=>analyzeDocuments(false),250)});document.getElementById('analyze-docs-btn').addEventListener('click',()=>{if(!state.documents.length){toast('Adicione pelo menos um documento.');return}analyzeDocuments(true)});
+
+function runDemo(n){
+  resetChat(false);hideStartScreen();
+  const scenario1=[
+    ['ncm','87089990'],['descricao','Peças automotivas — operação demonstrativa com 8 contêineres de 40ft'],['urgencia','Crítica'],
+    ['anuencia_prevista','Não'],['pendencia','Não'],['logistica','Sim'],
+    ['transporte','Sim'],['janela','Sim'],['entreposto','Não'],
+    ['preparacao','Alta']
+  ];
+  const scenario2=[
+    ['ncm','30049099'],['descricao','Medicamento de demonstração'],['urgencia','Alta'],
+    ['anuencia_prevista','Sim'],['orgao_anuente','ANVISA'],['pendencia','Sim'],
+    ['logistica','Sim'],['transporte','Sim'],['janela','Sim'],['entreposto','Não'],
+    ['preparacao','Média']
+  ];
+
+  if(n===2||n===3){
+    state.documents=[
+      {id:uid(),name:'invoice_demo.pdf',type:'Invoice',generated:false,status:'Lido',extractionMode:'real',extracted:{ncm:'30049099',mercadoria:'Medicamento de demonstração',referencia:'INV-DEMO-2409',valor:'US$ 18.450,00',importador:'Importadora Demo Ltda.'}},
+      {id:uid(),name:'packing_list_demo.pdf',type:'Packing List',generated:false,status:'Lido',extractionMode:'real',extracted:{ncm:'30049099',mercadoria:'Medicamento de demonstração',referencia:'PL-DEMO-2409',volumes:'12 volumes',peso:'486 kg'}}
+    ];
+    renderDocuments();
+  }
+
+  if(n===1){state.op.containers40=8;}
+  if(n===2||n===3){state.op.containers40=4;}
+
+  if(n===3){
+    addSafeMsg('system','Modo demonstração: operação fictícia travada por documentação. Todos os dados usados neste fluxo são locais e simulados para evitar dependência de internet.');
+    addActionLog('Demo completa iniciada.');
+    playScript(scenario2,0);
+    return;
+  }
+
+  addSafeMsg('system',n===1?'Demo simples: operação com estrutura pronta.':'Demo: operação travada por pendência documental.');
+  playScript(n===1?scenario1:scenario2,0);
+}
+function playScript(script,i){if(i>=script.length){setTimeout(()=>{if(state.documents.length)analyzeDocuments(true);setTimeout(finalize,650)},180);return}const[key,val]=script[i],qIndex=QUESTIONS.findIndex(q=>q.key===key),q=QUESTIONS[qIndex];setTimeout(()=>{addSafeMsg('agent',q.text);setTimeout(()=>{addSafeMsg('user',val);state.op[key]=val;state.step=qIndex+1;renderCtxFields();runSideEffects(key,val,()=>playScript(script,i+1))},120)},120)}
+
+
+
+
+/* =========================================================
+   V6 — CUSTO ESTIMADO / COBERTURA / AUDITORIA / RELATÓRIO
+========================================================= */
+function requiredFieldKeys(){
+  const keys=['ncm','descricao','urgencia','anuencia_prevista','pendencia','logistica','transporte','janela','entreposto','preparacao'];
+  if(normalize(state.op.anuencia_prevista)!=='nao')keys.splice(4,0,'orgao_anuente');
+  return keys;
+}
+function dataCoverage(){
+  const keys=requiredFieldKeys();
+  const filled=keys.filter(k=>state.op[k]!==undefined && state.op[k]!=='' && state.op[k]!==null);
+  const missing=keys.filter(k=>!filled.includes(k));
+  const ratio=filled.length/Math.max(keys.length,1);
+  const level=ratio>=.85?'Alta':ratio>=.55?'Média':'Baixa';
+  return {level,filled:filled.length,total:keys.length,missing,ratio};
+}
+
+
+function deriveCargoScale(op){
+  const escalaTxt=normalize(op.escala||'');
+  if(escalaTxt){
+    const c20m=escalaTxt.match(/(\d+)\s*(?:x\s*)?(?:conteiner(?:es)?|container(?:es)?)?.{0,12}\b20\b/);
+    const c40m=escalaTxt.match(/(\d+)\s*(?:x\s*)?(?:conteiner(?:es)?|container(?:es)?)?.{0,12}\b40\b/);
+    const teum=escalaTxt.match(/(\d+(?:[.,]\d+)?)\s*teu(?:s)?\b/);
+    const genericm=escalaTxt.match(/(\d+)\s*(?:conteiner(?:es)?|container(?:es)?)/);
+
+    if(c20m) op.containers20=Number(c20m[1]);
+    if(c40m) op.containers40=Number(c40m[1]);
+    if(teum) op.teus=Number(teum[1].replace(',','.'));
+    if(genericm && !c20m && !c40m) op.containers=Number(genericm[1]);
+  }
+
+  let c20=Number(op.containers20||0), c40=Number(op.containers40||0),
+      generic=Number(op.containers||0), teus=Number(op.teus||0);
+
+  // tenta extrair de documentos já lidos
+  if(!c20&&!c40&&!generic&&!teus){
+    for(const d of (state.documents||[])){
+      const txt=JSON.stringify(d.extracted||{});
+      let m=txt.match(/(\d+)\s*(?:x\s*)?(?:container|conteiner)(?:es)?\s*(?:20|20ft)/i);
+      if(m)c20+=Number(m[1]);
+      m=txt.match(/(\d+)\s*(?:x\s*)?(?:container|conteiner)(?:es)?\s*(?:40|40ft)/i);
+      if(m)c40+=Number(m[1]);
+      m=txt.match(/(\d+(?:[.,]\d+)?)\s*teu/i);
+      if(m)teus+=Number(m[1].replace(',','.'));
+    }
+  }
+
+  if(c20||c40){
+    const eqTeu=c20 + c40*2;
+    return {known:true,teus:eqTeu,label:`${c20?c20+'×20ft':''}${c20&&c40?' + ':''}${c40?c40+'×40ft':''}`};
+  }
+  if(teus>0)return {known:true,teus,label:`${teus} TEU`};
+  if(generic>0)return {known:true,teus:generic,label:`${generic} contêiner(es) — assumindo 1 TEU por unidade`};
+  return {known:false,teus:1,label:'por TEU / contêiner equivalente'};
+}
+
+function estimarCustos(op){
+  /*
+    MODELO DE PROTÓTIPO:
+    estima SOMENTE custos logístico-operacionais portuários/terrestres relacionados ao fluxo
+    e nunca o valor total de uma importação.
+
+    Bases unitárias por TEU são deliberadamente amplas para evitar falsa precisão.
+    Não incluem: mercadoria, tributos, frete internacional, seguro, câmbio, demurrage real,
+    armazenagem tarifada por terminal específico, honorários contratuais ou despesas oficiais.
+  */
+  const scale=deriveCargoScale(op);
+
+  // faixas-base por TEU/contêiner equivalente
+  // Retirada direta: menos permanência/armazenagem, mas depende de sincronização operacional.
+  // Recinto: handling/armazenagem/serviços adicionais potencialmente maiores.
+  let dLow=4500, dHigh=9500;
+  let rLow=7500, rHigh=18000;
+
+  const fatoresD=[],fatoresR=[];
+  const u=normalize(op.urgencia),p=normalize(op.pendencia),l=normalize(op.logistica),
+        t=normalize(op.transporte),j=normalize(op.janela),e=normalize(op.entreposto),
+        prep=normalize(op.preparacao),an=normalize(op.anuencia_prevista);
+
+  function bump(which, lowPct, highPct, label){
+    if(which==='d'||which==='both'){
+      dLow*=1+lowPct; dHigh*=1+highPct; fatoresD.push(label);
+    }
+    if(which==='r'||which==='both'){
+      rLow*=1+lowPct; rHigh*=1+highPct; fatoresR.push(label);
+    }
+  }
+
+  if(u==='alta')bump('both',.03,.08,'urgência alta');
+  if(u==='critica')bump('both',.08,.18,'urgência crítica');
+  if(an==='sim'){bump('d',.06,.14,'anuência/controle');bump('r',.08,.18,'anuência/controle');}
+  if(p==='sim'){bump('d',.18,.35,'pendência impeditiva');bump('r',.10,.22,'pendência impeditiva');}
+  else if(p.startsWith('parcial')){bump('d',.08,.18,'pendência incerta');bump('r',.05,.12,'pendência incerta');}
+  if(l==='nao'){bump('d',.25,.50,'logística não pronta');bump('r',.06,.16,'logística não pronta');}
+  else if(l.startsWith('parcial')){bump('d',.10,.22,'logística parcial');bump('r',.03,.10,'logística parcial');}
+  if(t==='nao'){bump('d',.18,.40,'transporte não programado');bump('r',.04,.12,'transporte não programado');}
+  if(j==='nao'){bump('d',.25,.55,'janela indisponível');bump('r',.05,.14,'janela indisponível');}
+  else if(j.includes('ainda nao sabemos')){bump('d',.10,.25,'janela incerta');bump('r',.03,.10,'janela incerta');}
+  if(e==='sim'){bump('d',.15,.35,'necessidade de armazenagem');bump('r',.25,.60,'armazenagem/entreposto');}
+  else if(e==='talvez'){bump('d',.05,.15,'possível armazenagem');bump('r',.10,.30,'possível armazenagem');}
+  if(prep==='baixa')bump('both',.05,.15,'baixa preparação');
+
+  const cap=String(op.ncm||'').slice(0,2);
+  if(['30','38','19','21','22'].includes(cap)){
+    bump('d',.05,.15,'complexidade documental/sanitária');
+    bump('r',.08,.18,'complexidade documental/sanitária');
+  }
+
+  function round100(x){return Math.max(0,Math.round(x/100)*100)}
+  const unitD={low:round100(dLow),high:round100(dHigh)};
+  const unitR={low:round100(rLow),high:round100(rHigh)};
+
+  const totalD=scale.known
+    ? {low:round100(unitD.low*scale.teus), high:round100(unitD.high*scale.teus)}
+    : null;
+  const totalR=scale.known
+    ? {low:round100(unitR.low*scale.teus), high:round100(unitR.high*scale.teus)}
+    : null;
+
+  const benchmark=state.logcomexBenchmark||null;
+  return {
+    scale,
+    unitDireta:unitD,
+    unitRecinto:unitR,
+    totalDireta:totalD,
+    totalRecinto:totalR,
+    fatoresD,fatoresR,
+    benchmark,
+    disclaimer:'Estimativa demonstrativa de custos logístico-operacionais do fluxo, por TEU/contêiner equivalente. Não representa o custo total da importação e não inclui mercadoria, tributos, frete internacional, seguro, câmbio ou tarifas oficiais específicas.'
+  };
+}
+function formatRange(x){return `${formatBRL(x.low)} – ${formatBRL(x.high)}`}
+
+function captureOperationSnapshot(label){
+  const s=deriveOperationStatus();
+  return {
+    label,status:s.label,stage:s.stage,pendency:state.op.pendencia||'Não informado',
+    docs:state.documents.length,missingDocs:state.documentIssue?.missing?.slice()||[],
+    result:state.result?.resultado||'Ainda não analisado',timestamp:new Date().toISOString()
+  };
+}
+
+function mainNextAction(){
+  if(state.documentIssue?.missing?.length)return 'Resolver a pendência documental e reanalisar a operação.';
+  if(normalize(state.op.pendencia)==='sim')return 'Confirmar a liberação da pendência impeditiva.';
+  if(normalize(state.op.janela)==='nao' || normalize(state.op.janela).includes('ainda nao sabemos'))return 'Confirmar a janela/agendamento do terminal.';
+  if(normalize(state.op.transporte)==='nao')return 'Programar o transporte antes da execução.';
+  if(normalize(state.op.logistica)!=='sim')return 'Concluir a preparação logística para o caminho escolhido.';
+  return 'Validar o cenário escolhido com o responsável operacional e registrar a decisão.';
+}
+
+function auditRows(){
+  const op=state.op, rows=[];
+  const add=(label,d,r)=>rows.push({label,d,r});
+  const u=normalize(op.urgencia);
+  if(u==='baixa')add('Urgência baixa',0,1);
+  if(u==='media')add('Urgência média',1,1);
+  if(u==='alta')add('Urgência alta',2,0);
+  if(u==='critica')add('Urgência crítica',3,0);
+  const p=normalize(op.pendencia);
+  if(p==='nao')add('Sem pendência impeditiva',2,0);
+  else if(p.startsWith('parcial'))add('Pendência incerta',0,1);
+  else if(p==='sim')add('Pendência impeditiva',0,3);
+  const l=normalize(op.logistica);
+  if(l==='sim')add('Logística pronta',3,0);
+  else if(l.startsWith('parcial'))add('Logística parcial',1,1);
+  else if(l==='nao')add('Logística não pronta',0,3);
+  const t=normalize(op.transporte);
+  if(t==='sim')add('Transporte programado',2,0); else if(t==='nao')add('Transporte não programado',0,2);
+  const j=normalize(op.janela);
+  if(j==='sim')add('Janela disponível',3,0);
+  else if(j.startsWith('parcial'))add('Janela parcial',1,1);
+  else if(j==='nao')add('Janela indisponível',0,3);
+  else if(j.includes('ainda nao sabemos'))add('Janela incerta',0,1);
+  const e=normalize(op.entreposto);
+  if(e==='nao')add('Sem necessidade de entreposto',1,0);
+  else if(e==='talvez')add('Possível entreposto',0,1);
+  else if(e==='sim')add('Entreposto necessário',0,3);
+  return rows;
+}
+
+function toggleAudit(id){
+  document.getElementById(id)?.classList.toggle('open');
+}
+
+function togglePresentationMode(force){
+  state.presentationMode=typeof force==='boolean'?force:!state.presentationMode;
+  document.body.classList.toggle('presentation-mode',state.presentationMode);
+  const btn=document.getElementById('presentation-btn');
+  if(btn)btn.textContent=state.presentationMode?'Sair do modo apresentação':'Modo apresentação';
+  if(state.presentationMode){
+    switchView('analysis');
+    runDemo(3);
+    toast('Modo apresentação ativado.');
+  }else{
+    toast('Modo apresentação encerrado.');
+  }
+}
+
+function exportSummaryReport(){
+  if(!state.result){toast('Conclua uma análise antes de exportar.');return}
+  const est=state.costEstimate||estimarCustos(state.op),cov=dataCoverage();
+  const dShown=est.totalDireta||est.unitDireta, rShown=est.totalRecinto||est.unitRecinto;
+  const basis=est.scale.known?`Escala: ${est.scale.label} (${est.scale.teus} TEU equivalente)`:'Sem escala informada: valores unitários por TEU/contêiner equivalente';
+  const report=`DUIMP HUB — RESUMO DA OPERAÇÃO
+${operationCode()}
+Gerado em: ${new Date().toLocaleString('pt-BR')}
+
+OPERAÇÃO
+NCM: ${state.op.ncm||'—'}
+Mercadoria: ${state.op.descricao||'—'}
+Urgência: ${state.op.urgencia||'—'}
+Órgão: ${state.op.orgao_anuente||'—'}
+Cobertura de dados: ${cov.level} (${cov.filled}/${cov.total})
+
+STATUS
+${deriveOperationStatus().label}
+Próxima ação: ${mainNextAction()}
+
+DOCUMENTOS
+${state.documents.length?state.documents.map(d=>`- ${d.type}: ${d.name} (${d.status||'registrado'})`).join('\n'):'- Nenhum documento registrado'}
+
+RESULTADO
+${state.result.resultado}
+Retirada direta: ${state.result.score_direta} pts
+Uso de recinto: ${state.result.score_recinto} pts
+
+CUSTO LOGÍSTICO-OPERACIONAL ESTIMADO — PROTÓTIPO
+${basis}
+Retirada direta: ${formatRange(dShown)}
+Uso de recinto: ${formatRange(rShown)}
+Unitário retirada: ${formatRange(est.unitDireta)} / TEU equivalente
+Unitário recinto: ${formatRange(est.unitRecinto)} / TEU equivalente
+
+${est.disclaimer}
+
+POR QUE
+${simpleDecisionExplanation()}
+
+AVISO
+O DUIMP Hub é ferramenta de apoio à decisão. Pré-checks, protocolos e estimativas deste protótipo não substituem validações oficiais, contratos, tarifas oficiais ou cotações reais.`;
+
+  try{
+    const blob=new Blob([report],{type:'text/plain;charset=utf-8'});
+    const url=URL.createObjectURL(blob),a=document.createElement('a');
+    a.href=url;a.download=`${operationCode()}_resumo_DUIMP_Hub.txt`;
+    document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+    addActionLog('Resumo da operação exportado.');
+  }catch(e){
+    toast('Não foi possível exportar neste navegador.');
+  }
+}
+
+/* =========================================================
+   EXPERIÊNCIA DE PRODUTO / STATUS / ARQUIVOS
+========================================================= */
+function operationCode(){
+  const raw=String(state.id||'').replace(/[^a-z0-9]/gi,'').toUpperCase();
+  return 'OP-' + raw.slice(-6);
+}
+function deriveOperationStatus(){
+  const hasAny=Object.keys(state.op||{}).length>0 || state.documents.length>0;
+  if(!hasAny)return {key:'collecting',label:'Nova operação',stage:'Aguardando contexto'};
+  if(state.documentIssue?.missing?.length || normalize(state.op.pendencia)==='sim')
+    return {key:'blocked',label:'Pendência identificada',stage:state.documentIssue?.missing?.length?'Documentação incompleta':'Aguardando liberação'};
+  if(state.documentDraft)
+    return {key:'review',label:'Documento em revisão',stage:'Aguardando aprovação do usuário'};
+  if(state.protocol)
+    return {key:'ready',label:'Pendência resolvida na simulação',stage:'Operação reavaliada'};
+  if(state.result)
+    return {key:'ready',label:'Análise concluída',stage:'Cenários disponíveis'};
+  return {key:'collecting',label:'Em análise',stage:'Coletando informações'};
+}
+function renderOperationStatus(){
+  const el=document.getElementById('operation-status-card');
+  if(!el)return;
+  const s=deriveOperationStatus(),cov=dataCoverage();
+  const missingLabels={
+    ncm:'NCM',descricao:'mercadoria',urgencia:'urgência',anuencia_prevista:'anuência',
+    orgao_anuente:'órgão',pendencia:'pendência',logistica:'logística',transporte:'transporte',
+    janela:'janela',entreposto:'entreposto',preparacao:'preparação'
+  };
+  el.innerHTML=`<div class="operation-card">
+    <div class="operation-card-top">
+      <div><div class="operation-code">${escapeHtml(operationCode())}</div><div class="operation-status ${s.key}">${escapeHtml(s.label)}</div></div>
+      <span class="badge-mini ${state.protocol?'sim':'proto'}">${state.protocol?'simulação':'protótipo'}</span>
+    </div>
+    <div class="operation-meta">
+      <div><span>Etapa</span>${escapeHtml(s.stage)}</div>
+      <div><span>Órgão</span>${escapeHtml(state.op.orgao_anuente||'—')}</div>
+      <div><span>NCM</span>${escapeHtml(state.op.ncm||'—')}</div>
+      <div><span>Documentos</span>${state.documents.length}</div>
+    </div>
+    <div class="coverage-wrap">
+      <div class="coverage-top"><span>Cobertura de dados</span><b>${cov.level} · ${cov.filled}/${cov.total}</b></div>
+      <div class="coverage-track"><div class="coverage-fill" style="width:${Math.round(cov.ratio*100)}%"></div></div>
+      ${cov.missing.length?`<div class="coverage-missing">Faltam: ${cov.missing.map(k=>missingLabels[k]||k).join(', ')}</div>`:''}
+    </div>
+  </div>`;
+  if(window.__faqReady&&typeof refreshFaqPanel==='function')refreshFaqPanel();
+}
+function hideStartScreen(){
+  const start=document.getElementById('start-screen');
+  const form=document.getElementById('freeform-box');
+  if(start)start.style.display='none';
+  if(form)form.style.display='block';
+  state.operationStarted=true;
+}
+function showStartScreen(){
+  const start=document.getElementById('start-screen');
+  const form=document.getElementById('freeform-box');
+  if(start)start.style.display='block';
+  if(form)form.style.display='none';
+  state.operationStarted=false;
+}
+function startProductAction(action){
+  if(action==='history'){switchView('history');return;}
+  resetChat(false);
+  hideStartScreen();
+  if(action==='documents'){
+    addMsg('agent','Adicione os documentos disponíveis. Vou organizar o que existe, identificar lacunas e relacioná-las à operação.');
+    setTimeout(()=>document.getElementById('doc-input')?.click(),120);
+    return;
+  }
+  if(action==='pendency'){
+    addMsg('agent','Descreva o que travou a operação. Se você souber o órgão, o documento que falta ou a mensagem de erro, inclua no texto.');
+    const ta=document.getElementById('freeform-operation');
+    ta.placeholder='Ex.: A operação de medicamento NCM 30049099 travou porque a ANVISA está pedindo documentação complementar...';
+    setTimeout(()=>ta.focus(),120);
+    return;
+  }
+  addMsg('agent','Descreva a operação em uma frase ou parágrafo. Vou aproveitar o que você já informar e perguntar somente o necessário.');
+  const ta=document.getElementById('freeform-operation');
+  ta.placeholder='Ex.: Importação urgente de peças NCM 87089990, logística pronta, transporte agendado e janela disponível...';
+  setTimeout(()=>ta.focus(),120);
+}
+
+async function extractFileText(file){
+  const ext=(file.name.split('.').pop()||'').toLowerCase();
+  if(['txt','csv','json','md','xml'].includes(ext)){
+    try{return await file.text()}catch(e){return ''}
+  }
+  if(ext==='pdf' && window.pdfjsLib){
+    try{
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      const data=new Uint8Array(await file.arrayBuffer());
+      const pdf=await window.pdfjsLib.getDocument({data}).promise;
+      let out='';
+      for(let p=1;p<=Math.min(pdf.numPages,8);p++){
+        const page=await pdf.getPage(p);
+        const content=await page.getTextContent();
+        out += content.items.map(i=>i.str).join(' ')+'\n';
+      }
+      return out.slice(0,30000);
+    }catch(e){return ''}
+  }
+  return '';
+}
+function fieldsFromFileText(text){
+  const out={};
+  const ncm=String(text).match(/\bNCM\D{0,15}(\d{8})\b/i) || String(text).match(/\b(\d{8})\b/);
+  if(ncm)out.ncm=ncm[1];
+  const inv=String(text).match(/(?:invoice|fatura)\s*(?:n[ºo°.]*)?\s*[:#-]?\s*([A-Z0-9./-]{3,})/i);
+  if(inv)out.referencia=inv[1];
+  const imp=String(text).match(/(?:importador|importer)\s*[:\-]\s*([^\n]{3,80})/i);
+  if(imp)out.importador=imp[1].trim();
+  const vol=String(text).match(/(\d+)\s+(?:volumes|packages|caixas)/i);
+  if(vol)out.volumes=vol[0];
+  return out;
+}
+function badgeForSource(kind){
+  if(kind==='user')return ['real','Real'];
+  if(kind==='sim')return ['sim','Simulação'];
+  if(kind==='engine')return ['engine','Motor'];
+  return ['external','Fonte externa'];
+}
+
+/* =========================================================
+   TEXTO LIVRE / LOG / RESULTADOS
+========================================================= */
+function addActionLog(text){
+  state.actionLog.push({time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),text});
+  renderActionLog();
+}
+function renderActionLog(){
+  const el=document.getElementById('ctx-action-log');
+  if(!el)return;
+  if(!state.actionLog.length){el.innerHTML='<div class="ctx-empty">Nenhuma ação executada.</div>';return;}
+  el.innerHTML=state.actionLog.slice(-8).reverse().map(x=>`<div class="log-item"><span class="log-time">${escapeHtml(x.time)}</span><span class="log-dot"></span><span>${escapeHtml(x.text)}</span></div>`).join('');
+}
+
+function parseFreeformOperation(text){
+  const t=normalize(text),f={};
+  const ncm=String(text).match(/\b\d{8}\b/); if(ncm)f.ncm=ncm[0];
+
+  if(/critica|critico|parada de linha|muito urgente/.test(t))f.urgencia='Crítica';
+  else if(/urgente|alta urgencia/.test(t))f.urgencia='Alta';
+  else if(/sem urgencia|baixa urgencia/.test(t))f.urgencia='Baixa';
+
+  if(/anvisa/.test(t)){f.anuencia_prevista='Sim';f.orgao_anuente='ANVISA';}
+  else if(/\bmapa\b/.test(t)){f.anuencia_prevista='Sim';f.orgao_anuente='MAPA';}
+  else if(/sem anuencia|nao precisa.{0,20}anuencia/.test(t))f.anuencia_prevista='Não';
+
+  if(/transporte.{0,20}(programado|agendado)|caminhao.{0,20}(programado|agendado)/.test(t))f.transporte='Sim';
+  if(/transporte.{0,20}(nao|sem).{0,10}(programado|agendado)|sem transporte/.test(t))f.transporte='Não';
+
+  if(/logistica.{0,20}pronta|estrutura.{0,20}pronta/.test(t))f.logistica='Sim';
+  if(/logistica.{0,20}nao.{0,10}pronta|estrutura.{0,20}nao.{0,10}pronta/.test(t))f.logistica='Não';
+
+  if(/janela.{0,20}disponivel|agendamento.{0,20}disponivel/.test(t))f.janela='Sim';
+  else if(/sem janela|janela.{0,20}indisponivel/.test(t))f.janela='Não';
+  else if(/nao sei.{0,20}janela|ainda nao sei.{0,20}janela|janela.{0,20}nao sei/.test(t))f.janela='Ainda não sabemos';
+
+  if(/sem pendencia|nenhuma pendencia/.test(t))f.pendencia='Não';
+  else if(/pendencia|travou|bloquead/.test(t))f.pendencia='Parcialmente / incerta';
+
+  if(/entreposto.{0,20}(necessario|precisa)|precisa.{0,20}armazenagem/.test(t))f.entreposto='Sim';
+  else if(/sem entreposto|nao precisa.{0,20}armazenagem/.test(t))f.entreposto='Não';
+
+  const desc=String(text).match(/(?:mercadoria|produto|carga)\s+(?:de\s+)?([^,.;]{4,55})/i);
+  if(desc)f.descricao=desc[1].trim();
+
+  // escala da operação — opcional, usada só para multiplicar o custo unitário
+  const c20=String(text).match(/(\d+)\s*(?:x\s*)?(?:conteiner(?:es)?|container(?:es)?)\s*(?:de\s*)?20/i);
+  const c40=String(text).match(/(\d+)\s*(?:x\s*)?(?:conteiner(?:es)?|container(?:es)?)\s*(?:de\s*)?40/i);
+  const cont=String(text).match(/(\d+)\s*(?:conteiner(?:es)?|container(?:es)?)/i);
+  const teu=String(text).match(/(\d+(?:[.,]\d+)?)\s*teu(?:s)?\b/i);
+  const ton=String(text).match(/(\d+(?:[.,]\d+)?)\s*(?:t|ton|tons|tonelada|toneladas)\b/i);
+
+  if(c20)f.containers20=parseInt(c20[1],10);
+  if(c40)f.containers40=parseInt(c40[1],10);
+  if(cont && !c20 && !c40)f.containers=parseInt(cont[1],10);
+  if(teu)f.teus=parseFloat(teu[1].replace(',','.'));
+  if(ton)f.peso_ton=parseFloat(ton[1].replace(',','.'));
+
+  if(/\bnavio\b/.test(t) && !f.containers && !f.containers20 && !f.containers40 && !f.teus){
+    f.escala_indefinida='navio citado sem quantidade de contêineres/TEUs';
+  }
+  return f;
+}
+function firstMissingQuestionIndex(){
+  for(let i=0;i<QUESTIONS.length;i++){
+    const q=QUESTIONS[i];
+    if(q.shouldAsk && !q.shouldAsk())continue;
+    if(state.op[q.key]===undefined || state.op[q.key]==='')return i;
+  }
+  return QUESTIONS.length;
+}
+function handleFreeformOperation(){
+  const ta=document.getElementById('freeform-operation');
+  const text=ta.value.trim();
+  if(!text){toast('Descreva a operação primeiro.');return;}
+
+  resetChat(false);
+  hideStartScreen();
+  ta.value=text;
+
+  const found=parseFreeformOperation(text);
+  Object.assign(state.op,found);
+  renderCtxFields();
+  addSafeMsg('user',text);
+  addSource('user','Descrição livre do usuário',' — dados estruturados pelo protótipo.');
+  addActionLog('Descrição livre processada pelo agente.');
+
+  const count=Object.keys(found).length;
+  addMsg('agent',count
+    ? `Entendi boa parte da operação: aproveitei <b>${count}</b> informação(ões) do seu texto. Agora vou perguntar só o que realmente falta para comparar os cenários. <span class="badge-mini proto">extração heurística</span>`
+    : `Ainda faltou contexto para estruturar a operação. Sem problema: vou completar apenas com algumas perguntas objetivas. <span class="badge-mini proto">protótipo</span>`);
+
+  state.step=firstMissingQuestionIndex();
+  setTimeout(askNext,220);
+}
+
+function mainBlocker(){
+  if(state.documentIssue?.missing?.length)return `Pendência documental: ${state.documentIssue.missing.join(', ')}`;
+  if(normalize(state.op.pendencia)==='sim')return 'Existe uma pendência impeditiva para retirada.';
+  if(normalize(state.op.janela)==='nao')return 'A janela/agendamento do terminal está indisponível.';
+  if(normalize(state.op.janela).includes('ainda nao sabemos'))return 'A janela/agendamento do terminal ainda não foi confirmada.';
+  if(normalize(state.op.transporte)==='nao')return 'O transporte ainda não está programado.';
+  if(state.result?.conflitos?.length)return state.result.conflitos[0];
+  return 'Nenhum bloqueio crítico identificado com os dados atuais.';
+}
+
+function buildResultOptions(){
+  if(!state.result)return null;
+  const r=state.result, est=state.costEstimate||estimarCustos(state.op);
+  const hardBlocked=Boolean(state.documentIssue?.missing?.length)||normalize(state.op.pendencia)==='sim';
+
+  const dRef=est.totalDireta || est.unitDireta;
+  const rRef=est.totalRecinto || est.unitRecinto;
+  const dMid=(dRef.low+dRef.high)/2, rMid=(rRef.low+rRef.high)/2;
+
+  const cheaper=dMid<=rMid
+    ? {choice:'Retirada direta',metric:formatRange(dRef),reason:`Menor faixa estimada de custos logístico-operacionais ${est.scale.known?'para a escala informada':'por TEU/contêiner equivalente'}.`}
+    : {choice:'Uso de recinto',metric:formatRange(rRef),reason:`Menor faixa estimada de custos logístico-operacionais ${est.scale.known?'para a escala informada':'por TEU/contêiner equivalente'}.`};
+  if(hardBlocked&&cheaper.choice==='Retirada direta')cheaper.reason+=' É a menor faixa nominal, mas a retirada não está operacionalmente disponível enquanto a pendência permanecer.';
+
+  let fastD=0,fastR=0;
+  if(['alta','critica'].includes(normalize(state.op.urgencia)))fastD+=2;
+  if(normalize(state.op.logistica)==='sim')fastD+=2;
+  if(normalize(state.op.transporte)==='sim')fastD+=2;
+  if(normalize(state.op.janela)==='sim')fastD+=2;
+  if(['sim','parcialmente / incerta'].includes(normalize(state.op.pendencia)))fastR+=2;
+  if(normalize(state.op.entreposto)==='sim')fastR+=2;
+  if(normalize(state.op.janela)==='nao')fastR+=2;
+
+  const faster=hardBlocked
+    ? {choice:'Sem caminho liberado',metric:'Pendência impeditiva',reason:'A velocidade só deve ser comparada depois que a pendência for resolvida e a operação reavaliada.'}
+    : fastD>fastR
+      ? {choice:'Retirada direta',metric:'Maior prontidão',reason:'Logística, transporte e janela indicam menor fricção operacional para retirada.'}
+      : fastR>fastD
+        ? {choice:'Uso de recinto',metric:'Fluxo mais protegido',reason:'Falta de prontidão torna a retirada imediata menos fluida.'}
+        : {choice:'Sem vantagem clara',metric:'Equilibrado',reason:'Os dados atuais não diferenciam claramente a velocidade operacional dos dois caminhos.'};
+
+  let riskD=0,riskR=0;
+  if(normalize(state.op.pendencia)==='nao')riskD+=2; else riskR+=3;
+  if(normalize(state.op.janela)==='sim')riskD+=2; else riskR+=1;
+  if(normalize(state.op.logistica)==='sim')riskD+=2; else riskR+=2;
+  if(normalize(state.op.entreposto)==='sim')riskR+=3;
+
+  const lowerRisk=hardBlocked
+    ? {choice:'Uso de recinto',metric:'Maior proteção enquanto houver pendência',reason:'A retirada está bloqueada; o recinto é o cenário conservador até a regularização e nova análise.'}
+    : riskD>riskR
+      ? {choice:'Retirada direta',metric:'Menor fricção identificada',reason:'Sem bloqueio crítico identificado, a prontidão operacional reduz o risco de interrupção.'}
+      : {choice:'Uso de recinto',metric:'Maior proteção operacional',reason:'Armazenagem ou falta de prontidão tornam o recinto uma alternativa mais conservadora.'};
+
+  const best={
+    choice:r.vencedor==='direta'?'Retirada direta':r.vencedor==='recinto'?'Uso de recinto':'Revisar antes de decidir',
+    metric:r.vencedor==='equilibrado'?'Conflitos relevantes':`${r.score_direta} × ${r.score_recinto} pts`,
+    reason:r.vencedor==='direta'
+      ? 'É o melhor equilíbrio entre prontidão, urgência, janela, transporte e pendências.'
+      : r.vencedor==='recinto'
+        ? 'É o melhor equilíbrio diante das pendências, armazenagem ou falta de prontidão para retirada.'
+        : 'Os caminhos estão próximos ou existe uma condição crítica que ainda precisa ser resolvida.'
+  };
+  return {cheaper,faster,lowerRisk,best,est};
+}
+function optionCard(title,icon,o,primary=false,extra=''){
+  return `<div class="option-card ${primary?'best':''} ${extra}">
+    <div class="option-kicker">${icon} ${escapeHtml(title)}</div>
+    <h3>${escapeHtml(o.choice)}</h3>
+    <div class="option-metric">${escapeHtml(o.metric)}</div>
+    <div class="option-reason">${escapeHtml(o.reason)}</div>
+  </div>`;
+}
+
+function simpleDecisionExplanation(){
+  if(!state.result)return '';
+  if(state.documentIssue?.missing?.length)
+    return `A principal barreira atual é documental: faltam ${state.documentIssue.missing.join(', ')}. Enquanto isso não for resolvido, a retirada não deve ser tratada como operacionalmente pronta.`;
+  if(normalize(state.op.pendencia)==='sim')
+    return 'Existe uma pendência impeditiva informada; por isso, a operação precisa de resolução antes de uma retirada imediata.';
+  if(state.result.vencedor==='direta')
+    return 'A retirada direta aparece bem posicionada porque a operação reúne maior prontidão logística e menos bloqueios para retirada.';
+  if(state.result.vencedor==='recinto')
+    return 'O uso de recinto aparece bem posicionado porque as condições atuais exigem mais proteção operacional, armazenagem ou resolução de pendências.';
+  return 'Os dois caminhos permanecem próximos; confirme os pontos pendentes antes de tomar a decisão operacional.';
+}
+
+function renderResultsPage(){
+  const body=document.getElementById('results-body');
+  if(!body)return;
+  if(!state.result){body.innerHTML='<div class="empty-card">Conclua uma análise para visualizar as opções.</div>';return;}
+
+  const o=buildResultOptions(),r=state.result,cov=dataCoverage(),audit=auditRows();
+  const before=state.beforeSnapshot,after=state.afterSnapshot;
+  const beforeAfter=(before&&after)?`
+    <div class="before-after">
+      <div class="ba-card">
+        <div class="ba-label">Antes da intervenção do agente</div>
+        <div class="ba-status">${escapeHtml(before.status)}</div>
+        <ul class="ba-list">
+          <li>Pendência: ${escapeHtml(before.pendency)}</li>
+          <li>Documentos: ${before.docs}</li>
+          ${before.missingDocs.length?`<li>Faltavam: ${before.missingDocs.map(escapeHtml).join(', ')}</li>`:''}
+        </ul>
+      </div>
+      <div class="ba-arrow">→</div>
+      <div class="ba-card">
+        <div class="ba-label">Depois</div>
+        <div class="ba-status">${escapeHtml(after.status)}</div>
+        <ul class="ba-list">
+          <li>Pendência: ${escapeHtml(after.pendency)}</li>
+          <li>Documentos: ${after.docs}</li>
+          <li>Operação reavaliada pelo motor</li>
+        </ul>
+      </div>
+    </div>`:'';
+
+  const est=o.est;
+  const dShown=est.totalDireta||est.unitDireta;
+  const rShown=est.totalRecinto||est.unitRecinto;
+  const basis=est.scale.known
+    ? `Escala usada: ${escapeHtml(est.scale.label)} (${est.scale.teus} TEU equivalente)`
+    : 'Escala não informada ou não reconhecida: valor total indisponível; exibindo apenas referência por TEU/contêiner equivalente.';
+
+  body.innerHTML=`
+    <div class="result-hero">
+      <div class="eyebrow">${escapeHtml(operationCode())} · comparação de cenários</div>
+      <h2>${escapeHtml(r.resultado)}</h2>
+      <p>Compare a operação por custo logístico-operacional estimado, velocidade, risco e compatibilidade global. O profissional continua responsável pela decisão final.</p>
+    </div>
+
+    ${beforeAfter}
+
+    <div class="decision-explanation">
+      <b>Por que este resultado apareceu?</b>
+      ${escapeHtml(simpleDecisionExplanation())}
+    </div>
+
+    <div class="blocker-card"><b>Principal ponto de atenção:</b> ${escapeHtml(mainBlocker())}</div>
+
+    <div class="result-options-grid">
+      ${optionCard('Mais barato','💰',o.cheaper)}
+      ${optionCard('Mais rápido','⚡',o.faster)}
+      ${optionCard('Menor risco operacional','◈',o.lowerRisk,false,'risk')}
+      ${optionCard('Melhor opção','◎',o.best,true)}
+    </div>
+
+    <div class="panel">
+      <h3>Estimativa de custo logístico-operacional</h3>
+      <div class="cost-scope">
+        <span class="badge-mini engine">${est.scale.known?'Total estimado da escala':'Valor unitário'}</span>
+        <span class="badge-mini proto">${escapeHtml(est.scale.label)}</span>
+      </div>
+      <div class="ctx-row"><span>Retirada direta</span><span><b>${escapeHtml(formatRange(dShown))}</b></span></div>
+      <div class="cost-unit">${est.scale.known?`Unitário estimado: ${escapeHtml(formatRange(est.unitDireta))} por TEU equivalente`:'por TEU / contêiner equivalente'}</div>
+      <div class="ctx-row" style="margin-top:8px"><span>Uso de recinto</span><span><b>${escapeHtml(formatRange(rShown))}</b></span></div>
+      <div class="cost-unit">${est.scale.known?`Unitário estimado: ${escapeHtml(formatRange(est.unitRecinto))} por TEU equivalente`:'por TEU / contêiner equivalente'}</div>
+
+      <div class="cost-breakdown">
+        <div class="cost-line"><span>Base de cálculo</span><b>${basis}</b></div>
+        <div class="cost-line"><span>Ajustes — retirada</span><b>${escapeHtml(est.fatoresD.slice(0,5).join(' · ')||'sem ajustes relevantes')}</b></div>
+        <div class="cost-line"><span>Ajustes — recinto</span><b>${escapeHtml(est.fatoresR.slice(0,5).join(' · ')||'sem ajustes relevantes')}</b></div>
+      </div>
+
+      ${est.benchmark?`<div class="cost-breakdown"><div class="cost-line"><span>Referência externa (Logcomex, ao vivo)</span><b>FOB ~US$ ${escapeHtml(est.benchmark.fobMilhoes)} mi${est.benchmark.operacoes?` · ${escapeHtml(est.benchmark.operacoes)} operações`:''}${est.benchmark.unidades?` · ${escapeHtml(est.benchmark.unidades)} mi unidades`:''} no período — usado apenas como cruzamento de contexto, não entra no cálculo da faixa acima.</b></div></div>`:''}
+      <div class="cost-warning"><b>Importante:</b> ${escapeHtml(est.disclaimer)}</div>
+    </div>
+
+    <div class="panel">
+      <h3>Cobertura da análise</h3>
+      <div class="coverage-top"><span>Dados disponíveis</span><b>${cov.level} · ${cov.filled}/${cov.total}</b></div>
+      <div class="coverage-track"><div class="coverage-fill" style="width:${Math.round(cov.ratio*100)}%"></div></div>
+      ${cov.missing.length?`<div class="coverage-missing">Ainda faltam: ${cov.missing.map(escapeHtml).join(', ')}</div>`:'<div class="coverage-missing">Todos os campos essenciais do protótipo estão preenchidos.</div>'}
+    </div>
+
+    <div class="audit-panel">
+      <button class="audit-toggle" onclick="toggleAudit('audit-body-main')"><span>Ver como chegamos nisso</span><span>＋</span></button>
+      <div class="audit-body" id="audit-body-main">
+        ${audit.map(x=>`<div class="audit-row"><span>${escapeHtml(x.label)}</span><span class="audit-score">Direta +${x.d} · Recinto +${x.r}</span></div>`).join('')}
+        <div class="audit-row"><span>Total</span><span class="audit-score">Direta ${r.score_direta} · Recinto ${r.score_recinto}</span></div>
+      </div>
+    </div>
+
+    <div class="next-action-card">
+      <b>Próximo passo recomendado pelo fluxo</b>
+      <span>${escapeHtml(mainNextAction())}</span>
+      <div class="report-actions">
+        ${state.documentIssue?.missing?.length?`<button class="btn amber" onclick="switchView('analysis');setTimeout(startResolveDocument,120)">Resolver com o agente</button>`:''}
+        <button class="btn" onclick="switchView('analysis')">Voltar à operação</button>
+        <button class="btn" onclick="exportSummaryReport()">Exportar resumo</button>
+        <button class="btn primary" onclick="saveCurrentAnalysis()">Salvar análise</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Transparência</h3>
+      <div style="font-size:11px;color:var(--ink-soft);line-height:1.65">
+        <span class="badge-mini real">Real</span> informações e arquivos do usuário.
+        <span class="badge-mini sim" style="margin-left:5px">Simulação</span> pré-check e protocolo.
+        <span class="badge-mini engine" style="margin-left:5px">Motor</span> compatibilidade e estimativa demonstrativa de custos.
+        <span class="badge-mini external" style="margin-left:5px">Fonte externa</span> contexto demonstrativo quando utilizado.
+      </div>
+    </div>`;
+}
+function reanalyzeAndShowResults(){
+  state.finalized=false;
+  finalize(true);
+}
+
+document.getElementById('freeform-analyze-btn')?.addEventListener('click',handleFreeformOperation);
+document.getElementById('guided-start-btn')?.addEventListener('click',()=>{
+  resetChat(true);
+});
+
+
+const STORAGE_KEY='duimpHubAnalysesDocumentalV2';function getHistory(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]')}catch{return[]}}function saveCurrentAnalysis(){
+  if(!state.result){toast('Finalize a análise antes de salvar.');return}
+  const list=getHistory(),status=deriveOperationStatus();
+  const item={
+    id:state.id,code:operationCode(),createdAt:new Date().toISOString(),op:{...state.op},
+    documents:state.documents.map(d=>({name:d.name,type:d.type,generated:d.generated,status:d.status})),
+    protocol:state.protocol,documentIssue:state.documentIssue,
+    operationalStatus:status,result:state.result
+  };
+  const idx=list.findIndex(x=>x.id===item.id);
+  if(idx>=0)list[idx]=item;else list.unshift(item);
+  try{
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(list.slice(0,50)));
+    toast('Análise salva neste navegador.');
+  }catch(e){
+    toast('O preview bloqueou o armazenamento local; a análise continua disponível nesta sessão.');
+  }
+  renderHistory();renderDashboard();
+}
+function renderHistory(){
+  const body=document.getElementById('history-body'),list=getHistory();
+  if(!list.length){body.innerHTML='<div class="empty-card">Nenhuma análise salva ainda. Finalize uma operação e clique em “Salvar análise”.</div>';return}
+  body.innerHTML=`<table class="history-table">
+    <thead><tr><th>Operação</th><th>Status</th><th>Mercadoria</th><th>Pendência</th><th>Resultado</th><th>Atualizado</th></tr></thead>
+    <tbody>${list.map(x=>{
+      const cls=x.result?.vencedor==='direta'?'direta':x.result?.vencedor==='recinto'?'recinto':'equilibrado';
+      const status=x.operationalStatus||{key:x.documentIssue?.missing?.length?'blocked':'ready',label:x.documentIssue?.missing?.length?'Pendência identificada':'Análise concluída'};
+      const pending=x.documentIssue?.missing?.length?x.documentIssue.missing.join(', '):(x.op?.pendencia==='Sim'?'Pendência operacional':'—');
+      return `<tr>
+        <td><b>${escapeHtml(x.code||'OP-—')}</b><br><span style="color:var(--ink-soft);font-size:10px">${escapeHtml(x.op?.ncm||'—')}</span></td>
+        <td><span class="history-status ${escapeHtml(status.key)}">${escapeHtml(status.label)}</span></td>
+        <td>${escapeHtml(x.op?.descricao||'—')}</td>
+        <td>${escapeHtml(pending)}</td>
+        <td><span class="badge ${cls}">${escapeHtml(x.result?.resultado||'—')}</span></td>
+        <td>${escapeHtml(new Date(x.createdAt).toLocaleString('pt-BR'))}</td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+function renderDashboard(){const body=document.getElementById('dashboard-body'),list=getHistory();const counts={direta:0,recinto:0,equilibrado:0};list.forEach(x=>counts[x.result?.vencedor]=(counts[x.result?.vencedor]||0)+1);const docs=list.reduce((a,x)=>a+(x.documents?.length||0),0),protocols=list.filter(x=>x.protocol).length;body.innerHTML=`<div class="grid"><div class="kpi"><div class="kpi-label">Análises salvas</div><div class="kpi-value">${list.length}</div></div><div class="kpi"><div class="kpi-label">Documentos registrados/gerados</div><div class="kpi-value">${docs}</div></div><div class="kpi"><div class="kpi-label">Protocolos simulados</div><div class="kpi-value">${protocols}</div></div></div><div class="panel"><h3>Distribuição dos resultados</h3><div class="ctx-row"><span>Retirada direta</span><span>${counts.direta||0}</span></div><div class="ctx-row"><span>Uso de recinto</span><span>${counts.recinto||0}</span></div><div class="ctx-row"><span>Equilibrado / bloqueado</span><span>${counts.equilibrado||0}</span></div><div style="margin-top:12px;font-size:11px;color:var(--ink-soft)">Dados apenas das análises salvas neste navegador.</div></div>`}
+
+function switchView(name){
+  const target=document.getElementById('view-'+name);
+  if(!target){console.warn('View inexistente:',name);return;}
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  target.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.view===name));
+  if(name==='history')renderHistory();
+  if(name==='dashboard')renderDashboard();
+  if(name==='results')renderResultsPage();
+}document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>switchView(n.dataset.view)));document.getElementById('new-op-btn').addEventListener('click',()=>{switchView('analysis');resetChat(false)});
+function resetChat(ask=true){
+  chatBody.innerHTML='';
+  state.id=uid();state.op={};state.step=0;state.sources=[];state.documents=[];
+  state.waitingFree=false;state.inputMode='question';state.preCheck=null;state.result=null;
+  state.finalized=false;state.documentIssue=null;state.documentDraft=null;state.protocol=null;
+  state.actionLog=[];clearTimeout(state.redirectTimer);state.redirectTimer=null;state.operationStarted=false;state.beforeSnapshot=null;state.afterSnapshot=null;state.costEstimate=null;state.lastError=null;state.logcomexData=null;state.logcomexBenchmark=null;
+
+  document.getElementById('ctx-sources').innerHTML='<div class="ctx-empty">—</div>';
+  document.getElementById('head-sub').textContent='Analisa a operação, detecta pendências e ajuda a resolvê-las.';
+  document.querySelectorAll('.tool-chip').forEach(c=>c.classList.remove('active','done'));
+  setStatus('wait','Aguardando dados');
+  renderCtxFields();renderDocuments();renderPendency();renderActionLog();renderResultsPage();renderOperationStatus();
+  document.getElementById('free-input').disabled=true;
+  document.getElementById('send-btn').disabled=true;
+  const ta=document.getElementById('freeform-operation');if(ta)ta.value='';
+
+  if(ask){
+    hideStartScreen();
+    addMsg('agent','Nova operação iniciada. Você pode descrevê-la no campo acima ou seguir pelo questionário guiado.');
+    setTimeout(askNext,220);
+  }else{
+    showStartScreen();
+  }
+}
+
+renderHistory();renderDashboard();renderResultsPage();renderActionLog();renderOperationStatus();showStartScreen();
+
+/* =========================================================
+   STATUS DA CONEXÃO LOGCOMEX (sidebar)
+========================================================= */
+(async function initLogcomexStatus(){
+  const dot=document.getElementById('logcomex-signal'),txt=document.getElementById('logcomex-status-text');
+  txt.title=`MCP oficial: ${LOGCOMEX_MCP_URL}`;
+  const mcp=await getMcp();
+  if(!mcp){txt.textContent='Logcomex: modo local (sem MCP)';dot.style.background='#9AA3B2';return}
+  try{
+    const list=await mcp.listTools('Logcomex.ai');
+    const info=(list.servers||[])[0];
+    if(!info){txt.textContent='Logcomex: MCP não conectado';dot.style.background='#9AA3B2';return}
+    if(info.authStatus==='connected'){txt.textContent='Logcomex: conectado (MCP ao vivo)';dot.style.background='#1E9E5A'}
+    else if(info.authStatus==='needs_reauth'){txt.textContent='Logcomex: reconectar necessário';dot.style.background='#C77A16'}
+    else{txt.textContent='Logcomex: conectar em Configurações';dot.style.background='#9AA3B2'}
+  }catch(e){txt.textContent='Logcomex: status indisponível';dot.style.background='#9AA3B2'}
+})();
+
+/* =========================================================
+   AGENTE DE DÚVIDAS — BASE LOCAL, OFFLINE E SOMENTE LEITURA
+========================================================= */
+const FAQ_SESSION_KEY='duimpHubFaqSessionV3';
+const FAQ_MAX_MESSAGES=50;
+const FAQ_FIELD_LABELS={
+  ncm:'NCM',descricao:'mercadoria',escala:'escala da carga',urgencia:'urgência',
+  anuencia_prevista:'anuência',orgao_anuente:'órgão anuente',pendencia:'pendência',
+  logistica:'logística',transporte:'transporte',janela:'janela do terminal',
+  entreposto:'armazenagem/entreposto',preparacao:'preparação DUIMP'
+};
+const faqState={messages:[],lastIntent:null,operationId:null,busy:false};
+
+function faqLoadSession(){
+  try{
+    const parsed=JSON.parse(sessionStorage.getItem(FAQ_SESSION_KEY)||'null');
+    if(!parsed||parsed.version!==3||!Array.isArray(parsed.messages))return;
+    faqState.messages=parsed.messages.slice(-FAQ_MAX_MESSAGES).filter(m=>m&&['user','agent','system'].includes(m.role)&&typeof m.text==='string').map(m=>({
+      role:m.role,text:m.text.slice(0,5000),meta:Array.isArray(m.meta)?m.meta.slice(0,4):[],intent:m.intent||null,at:m.at||null
+    }));
+    faqState.lastIntent=parsed.lastIntent||null;
+    faqState.operationId=parsed.operationId||null;
+  }catch(e){}
+}
+function faqSaveSession(){
+  try{
+    sessionStorage.setItem(FAQ_SESSION_KEY,JSON.stringify({
+      version:3,operationId:faqState.operationId,lastIntent:faqState.lastIntent,
+      messages:faqState.messages.slice(-FAQ_MAX_MESSAGES),updatedAt:new Date().toISOString()
+    }));
+  }catch(e){}
+}
+function faqMetaClass(label){
+  const n=normalize(label);
+  if(n.includes('operacao'))return'context';
+  if(n.includes('simul')||n.includes('protot')||n.includes('estimativa')||n.includes('limite'))return'sim';
+  return'';
+}
+function faqRenderMessage(message){
+  const box=document.getElementById('faq-body');
+  if(!box)return;
+  const wrap=document.createElement('div');
+  wrap.className='faq-msg '+message.role;
+  const bubble=document.createElement('div');
+  bubble.className='faq-bubble';
+  bubble.textContent=message.text;
+  wrap.appendChild(bubble);
+  if(message.role!=='user'&&message.meta?.length){
+    const meta=document.createElement('div');meta.className='faq-msg-meta';
+    message.meta.forEach(label=>{
+      const tag=document.createElement('span');tag.className='faq-meta-tag '+faqMetaClass(label);tag.textContent=label;meta.appendChild(tag);
+    });
+    wrap.appendChild(meta);
+  }
+  box.appendChild(wrap);box.scrollTop=box.scrollHeight;
+}
+function faqAppend(role,text,meta=[],intent=null,persist=true){
+  const message={role,text:String(text||''),meta,intent,at:new Date().toISOString()};
+  faqState.messages.push(message);
+  if(faqState.messages.length>FAQ_MAX_MESSAGES)faqState.messages=faqState.messages.slice(-FAQ_MAX_MESSAGES);
+  if(intent)faqState.lastIntent=intent;
+  faqRenderMessage(message);
+  if(persist)faqSaveSession();
+  return message;
+}
+function faqWelcome(){
+  return 'Olá! Este é o canal de dúvidas do DUIMP Hub. Posso explicar conceitos ou comentar os dados da operação atual. Funciono com uma base local, sem depender de internet, e não altero a análise.';
+}
+function faqRestoreMessages(){
+  const box=document.getElementById('faq-body');
+  box.innerHTML='';
+  faqState.messages.forEach(faqRenderMessage);
+  if(!faqState.messages.length)faqAppend('agent',faqWelcome(),['Base local','Protótipo'],'help');
+}
+
+function getFaqOperationContext(){
+  const op={...(state.op||{})};
+  const active=Object.keys(op).length>0||(state.documents||[]).length>0;
+  const status=deriveOperationStatus();
+  const coverage=dataCoverage();
+  let scale={known:false,teus:1,label:'não informada'};
+  try{scale=deriveCargoScale({...op})}catch(e){}
+  let estimate=state.costEstimate||null;
+  if(!estimate&&active){try{estimate=estimarCustos({...op})}catch(e){estimate=null}}
+  return{
+    active,id:operationCode(),op,status,coverage,scale,estimate,
+    documents:(state.documents||[]).map(d=>({type:d.type||'Documento',name:d.name||'',status:d.status||'registrado',generated:!!d.generated})),
+    missingDocuments:(state.documentIssue?.missing||[]).slice(),
+    preCheck:state.preCheck||null,result:state.result||null,protocol:state.protocol||null,
+    blocker:active?mainBlocker():null,nextAction:active?mainNextAction():null
+  };
+}
+function faqWinnerLabel(result){
+  if(!result)return'Análise ainda não concluída';
+  if(result.vencedor==='direta')return'Retirada direta';
+  if(result.vencedor==='recinto')return'Uso de recinto';
+  return'Cenários equilibrados ou bloqueados';
+}
+function faqMissingLabels(ctx){
+  return(ctx.coverage?.missing||[]).map(k=>FAQ_FIELD_LABELS[k]||k);
+}
+function refreshFaqPanel(){
+  const ctx=getFaqOperationContext();
+  if(window.__faqReady)faqSyncOperation(ctx);
+  const el=document.getElementById('faq-context');
+  if(el){
+    if(!ctx.active){
+      el.innerHTML='<div class="faq-context-empty"><b>Nenhuma operação em andamento.</b> Posso responder conceitos gerais; os comentários contextuais aparecem quando houver dados.</div>';
+    }else{
+      const detail=[ctx.op.descricao||null,ctx.op.ncm?('NCM '+ctx.op.ncm):null,ctx.scale.known?ctx.scale.label:null].filter(Boolean).join(' · ');
+      el.innerHTML=`<div class="faq-context-top"><b>${escapeHtml(ctx.id)} · ${escapeHtml(ctx.status.label)}</b><span>${escapeHtml(faqWinnerLabel(ctx.result))}</span></div><div class="faq-context-detail">${escapeHtml(detail||ctx.status.stage)}</div>`;
+    }
+  }
+  faqRenderQuickQuestions(ctx);
+}
+function faqQuickQuestions(ctx){
+  if(!ctx.active)return['O que é DUIMP?','Retirada direta x recinto','O que é anuência?','Quais documentos podem aparecer?'];
+  const items=['Resuma esta operação','O que está travando?'];
+  if(ctx.result)items.push('Por que esse resultado apareceu?');else items.push('Qual é o próximo passo?');
+  if(ctx.missingDocuments.length)items.push('Quais documentos faltam?');
+  else if(ctx.documents.length)items.push('Quais documentos estão registrados?');
+  else items.push('Quais documentos devo conferir?');
+  if(ctx.estimate)items.push('Como o custo foi calculado?');
+  return items.slice(0,5);
+}
+function faqRenderQuickQuestions(ctx=getFaqOperationContext()){
+  const wrap=document.getElementById('faq-quick');if(!wrap)return;
+  wrap.innerHTML='';
+  faqQuickQuestions(ctx).forEach(question=>{
+    const b=document.createElement('button');b.type='button';b.className='faq-chip';b.textContent=question;
+    b.addEventListener('click',()=>faqAsk(question));wrap.appendChild(b);
+  });
+  wrap.scrollLeft=0;
+}
+function faqSyncOperation(ctx){
+  if(faqState.operationId&&faqState.operationId!==ctx.id){
+    faqState.lastIntent=null;
+    faqAppend('system',ctx.active
+      ?`O contexto ativo agora é ${ctx.id}. As próximas respostas usam somente os dados dessa operação.`
+      :'A operação anterior não está mais ativa. As mensagens acima permanecem apenas como histórico desta sessão.',
+      ['Operação atual'],null,false);
+  }
+  faqState.operationId=ctx.active?ctx.id:null;
+  faqSaveSession();
+}
+
+function faqDetectIntent(question,ctx){
+  const q=normalize(question).replace(/[?!.,;:]+/g,' ').replace(/\s+/g,' ').trim();
+  const contextual=/\b(meu caso|nesta operacao|nessa operacao|operacao atual|aqui|desta operacao|dessa operacao)\b/.test(q);
+  const asksSpecificRule=/\b(obrigatorio|obrigatoria|prazo legal|lei|norma|portaria|vigente|aliquota|tarifa oficial|exige|exigido|pode liberar|autorizado|autorizacao oficial)\b/.test(q)||(/\bncm\b/.test(q)&&/\b(anvisa|mapa|anuencia|lpco|exige|precisa)\b/.test(q));
+  if(asksSpecificRule)return'current_rule';
+  if(/\b(prototipo|simulacao|simulado|offline|sem internet|base local|dado real)\b/.test(q))return'limits';
+  if(/\b(resum[a-z]*|panorama|situacao geral)\b/.test(q)&&(/\boperacao\b/.test(q)||ctx.active))return'operation_summary';
+  if(/\b(status|situacao)\b/.test(q)&&ctx.active)return'operation_summary';
+  if(/\b(o que falta|esta faltando|falta o que|travando|bloqueio|bloqueado|pendencia atual)\b/.test(q))return'operation_blocker';
+  if(/\b(proximo passo|o que faco agora|como continuar|e agora)\b/.test(q))return'next_step';
+  if((/\b(por que|porque|motivo|explica)\b/.test(q)&&/\b(resultado|direta|recinto|escolh|indic|recomend)\b/.test(q))||q==='por que'||q==='porque')return'result_reason';
+  if(/\b(qual caminho|qual opcao|melhor opcao|recomendacao|vale mais|devo usar)\b/.test(q))return'result_reason';
+  if(/\b(custo|custos|gasto|valor|preco|estimativa|calculad|faixa)\b/.test(q))return'cost';
+  if(/\b(escala|teu|conteiner|container|20 pes|40 pes)\b/.test(q))return'scale';
+  if(/\b(documentos? falt|o que falta nos documentos|pendencia documental)\b/.test(q))return'operation_documents';
+  if(/\b(documentos? (tenho|registrad|enviad|adicionad)|quais documentos estao)\b/.test(q))return'operation_documents';
+  if(/\b(anuencia|orgao anuente|anvisa|mapa)\b/.test(q)&&contextual)return'operation_anuence';
+  if((q==='e no meu caso'||q==='e neste caso'||q==='e nessa operacao'||q==='e aqui')&&faqState.lastIntent){
+    if(['duimp','direct','warehouse','comparison'].includes(faqState.lastIntent))return'result_reason';
+    if(['documents','operation_documents'].includes(faqState.lastIntent))return'operation_documents';
+    if(['anuence','operation_anuence'].includes(faqState.lastIntent))return'operation_anuence';
+    if(['cost','scale'].includes(faqState.lastIntent))return faqState.lastIntent;
+    return'operation_summary';
+  }
+  if(/\b(lpco|licencas permissoes certificados)\b/.test(q))return'lpco';
+  if(/\b(retirada direta)\b/.test(q)&&/\b(recinto|versus| vs |diferenca|compar)\b/.test(' '+q+' '))return'comparison';
+  if(/\b(retirada direta)\b/.test(q))return'direct';
+  if(/\b(recinto alfandegado|recinto)\b/.test(q))return'warehouse';
+  if(/\b(anuencia|orgao anuente|anvisa|mapa)\b/.test(q))return'anuence';
+  if(/\b(invoice|commercial invoice|fatura comercial)\b/.test(q))return'invoice';
+  if(/\b(packing list|romaneio)\b/.test(q))return'packing';
+  if(/\b(conhecimento de carga|bill of lading|\bbl\b)\b/.test(q))return'bl';
+  if(/\b(documento|documentos|documentacao|checklist)\b/.test(q))return contextual?'operation_documents':'documents';
+  if(/\b(entreposto|armazenagem|armazenamento)\b/.test(q))return'entreposto';
+  if(/\boea\b/.test(q))return'oea';
+  if(/\b(ncm|classificacao fiscal)\b/.test(q))return'ncm';
+  if(/\b(catalogo de produtos|catalogo)\b/.test(q))return'catalog';
+  if(/\bduimp\b/.test(q))return'duimp';
+  if(/^(oi|ola|bom dia|boa tarde|boa noite|ajuda|o que voce faz|como funciona)\b/.test(q))return'help';
+  return'fallback';
+}
+
+function faqAnswer(question,ctx){
+  const intent=faqDetectIntent(question,ctx);
+  const local=['Base local'];
+  const contextual=['Base local','Operação atual','Protótipo'];
+  if(intent==='duimp')return{intent,text:'A DUIMP é a Declaração Única de Importação elaborada no módulo de Importação do Portal Único Siscomex. Ela reúne dados da operação, da carga, dos documentos, dos itens e do tratamento administrativo. A aplicação e os campos válidos dependem do escopo vigente no Portal Único; este chat explica o conceito, mas não registra nem valida uma declaração.',meta:local};
+  if(intent==='direct')return{intent,text:'Neste protótipo, retirada direta é o cenário em que a carga segue para retirada com menor permanência, desde que liberação, documentos, transporte, janela e estrutura logística estejam compatíveis. Não é uma autorização automática: qualquer pendência, inspeção ou indisponibilidade operacional pode impedir ou reduzir a vantagem desse caminho.',meta:['Base local','Protótipo']};
+  if(intent==='warehouse')return{intent,text:'Recinto alfandegado é uma instalação autorizada e submetida ao controle aduaneiro, usada para movimentação, armazenagem e procedimentos sobre cargas. No comparador, o uso de recinto tende a ganhar peso quando há pendência, inspeção, janela indisponível, transporte não programado ou necessidade de armazenagem. A escolha real depende do terminal, do regime e das liberações aplicáveis.',meta:['Base local','Protótipo']};
+  if(intent==='comparison')return{intent,text:'Não existe vencedor universal. A retirada direta tende a exigir liberação e sincronização entre documentos, transporte e janela; o recinto oferece margem para armazenagem, inspeção e regularização, mas pode acrescentar etapas e custos. O DUIMP Hub compara essas condições operação por operação e apresenta uma tendência demonstrativa, nunca uma liberação oficial.',meta:['Base local','Protótipo']};
+  if(intent==='anuence')return{intent,text:'Anuência é o controle administrativo exercido por um órgão competente sobre determinadas mercadorias ou operações. Quando aplicável, o processo pode envolver LPCO, documentos, inspeção ou outras condições do órgão. O NCM sozinho não basta para este chat afirmar a exigência: produto, atributos, finalidade e regra vigente também precisam ser confirmados no Portal Único e na fonte oficial.',meta:['Base local','Limite do protótipo']};
+  if(intent==='lpco')return{intent,text:'LPCO significa Licenças, Permissões, Certificados e Outros Documentos. No Portal Único, o módulo é usado quando o tratamento administrativo da importação requer um pedido ou documento específico. O modelo correto e o momento do pedido dependem da mercadoria e da regra vigente; a base offline não valida um enquadramento específico.',meta:['Base local','Limite do protótipo']};
+  if(intent==='documents')return{intent,text:'Documentos comuns podem incluir Commercial Invoice, Packing List e conhecimento de carga, além de documentos instrutivos, certificados ou LPCO conforme a operação. Isso é uma referência geral, não uma lista universal. O conjunto correto depende da mercadoria, do modal, do tratamento administrativo, do regime e das exigências vigentes.',meta:['Base local','Limite do protótipo']};
+  if(intent==='invoice')return{intent,text:'A Commercial Invoice registra os dados comerciais da operação, como partes, mercadoria, valores, moeda e condições negociadas. No protótipo, ela pode fornecer alguns dados ao contexto, mas a leitura local não comprova validade, autenticidade ou suficiência documental.',meta:['Base local','Protótipo']};
+  if(intent==='packing')return{intent,text:'O Packing List, ou romaneio de carga, detalha a composição física dos volumes — por exemplo, quantidades, pesos, medidas e identificação das embalagens. Ele ajuda a conferir a carga, mas não substitui a Invoice nem eventuais documentos regulatórios.',meta:local};
+  if(intent==='bl')return{intent,text:'O conhecimento de carga documenta o transporte. No modal marítimo, é comum a referência ao Bill of Lading (BL). Dados, formato e efeitos variam conforme o modal e a operação; o protótipo apenas registra o documento informado, sem validá-lo perante transportador ou autoridade.',meta:['Base local','Protótipo']};
+  if(intent==='entreposto')return{intent,text:'Armazenagem é a permanência física da carga no recinto. Entreposto aduaneiro é um regime específico, com requisitos próprios, e não deve ser tratado como sinônimo automático de qualquer armazenagem. Neste protótipo, o campo representa a necessidade operacional de permanência/entreposto e influencia apenas a comparação simulada.',meta:['Base local','Protótipo']};
+  if(intent==='oea')return{intent,text:'OEA é o Programa Brasileiro de Operador Econômico Autorizado, que certifica intervenientes considerados de baixo risco e confiáveis em critérios definidos pela Receita Federal. Benefícios e modalidades devem ser verificados nas regras vigentes; este protótipo não consulta nem confirma a certificação de uma empresa.',meta:['Base local','Limite do protótipo']};
+  if(intent==='ncm')return{intent,text:'A NCM classifica fiscalmente a mercadoria e participa de regras tributárias e de tratamento administrativo. Uma decisão não deve ser tomada apenas pelo código: descrição, atributos, finalidade, origem e normas vigentes podem mudar o enquadramento. O protótipo armazena o NCM informado, mas não certifica a classificação.',meta:['Base local','Limite do protótipo']};
+  if(intent==='catalog')return{intent,text:'O Catálogo de Produtos do Portal Único organiza dados dos produtos e do operador estrangeiro para reaproveitamento nas operações. O cadastro exige consistência com a classificação e os atributos do item. Este arquivo não está conectado ao Portal Único e não cria nem valida itens do catálogo.',meta:['Base local','Protótipo']};
+  if(intent==='limits')return{intent,text:'Este agente funciona offline com respostas e heurísticas gravadas no próprio HTML. Ele lê apenas os dados já presentes nesta tela e guarda a conversa no sessionStorage da aba. Não consulta Siscomex, Receita, ANVISA, MAPA ou terminal; pré-check, protocolo, resultado e custo exibidos pelo protótipo não são atos oficiais.',meta:['Base local','Protótipo']};
+  if(intent==='current_rule')return{intent,text:`A base offline não confirma obrigação, prazo, tarifa ou exigência vigente para um caso específico${ctx.op.ncm?' (NCM '+ctx.op.ncm+')':''}. Posso explicar o conceito e organizar os dados desta operação, mas a confirmação deve ser feita no tratamento administrativo do Portal Único, na norma aplicável, no órgão anuente, no terminal ou com o responsável aduaneiro.`,meta:['Base local','Limite do protótipo']};
+  if(intent==='operation_summary'){
+    if(!ctx.active)return{intent,text:'Ainda não há dados de uma operação nesta tela. Inicie uma análise ou adicione documentos; depois posso resumir status, cobertura, escala, pendências e resultado sem alterar o fluxo.',meta:contextual};
+    const lines=[`Panorama de ${ctx.id}:`,`• Status: ${ctx.status.label} — ${ctx.status.stage}.`];
+    if(ctx.op.descricao||ctx.op.ncm)lines.push(`• Carga: ${ctx.op.descricao||'não descrita'}${ctx.op.ncm?' · NCM '+ctx.op.ncm:''}.`);
+    lines.push(`• Escala: ${ctx.scale.known?ctx.scale.label:'ainda não informada'}.`);
+    lines.push(`• Dados: cobertura ${ctx.coverage.level.toLowerCase()} (${ctx.coverage.filled}/${ctx.coverage.total}).`);
+    lines.push(`• Documentos: ${ctx.documents.length} registrado(s)${ctx.missingDocuments.length?' · faltam '+ctx.missingDocuments.join(', '):''}.`);
+    if(ctx.result)lines.push(`• Resultado do motor: ${ctx.result.resultado}.`);
+    lines.push(`Ponto de atenção: ${ctx.blocker}`);
+    return{intent,text:lines.join('\n'),meta:contextual};
+  }
+  if(intent==='operation_blocker'){
+    if(!ctx.active)return{intent,text:'Sem uma operação em andamento, não há como identificar bloqueios. Posso explicar quais fatores normalmente merecem conferência: documentos, anuência, liberação, transporte, janela, logística e necessidade de armazenagem.',meta:contextual};
+    const parts=[];
+    if(ctx.missingDocuments.length)parts.push(`O pré-check local marcou como faltante: ${ctx.missingDocuments.join(', ')}.`);
+    parts.push(`Principal ponto de atenção: ${ctx.blocker}`);
+    const missing=faqMissingLabels(ctx);if(missing.length)parts.push(`Dados ainda não preenchidos: ${missing.join(', ')}.`);
+    parts.push('Isso é uma leitura do protótipo, não uma retenção ou exigência confirmada por órgão/terminal.');
+    return{intent,text:parts.join('\n'),meta:contextual};
+  }
+  if(intent==='next_step'){
+    if(!ctx.active)return{intent,text:'Primeiro, descreva a operação ou inicie o questionário guiado. Este chat é somente para dúvidas e não preenche a análise por conta própria.',meta:contextual};
+    return{intent,text:`Próximo passo sugerido pelo protótipo: ${ctx.nextAction}\nAntes de executar, confirme o status real com os responsáveis e sistemas aplicáveis.`,meta:contextual};
+  }
+  if(intent==='result_reason'){
+    if(!ctx.active)return{intent,text:'Ainda não existe uma operação para comparar. A análise precisa de contexto sobre carga, escala, urgência, pendências, logística, transporte, janela e armazenagem.',meta:contextual};
+    if(!ctx.result){const missing=faqMissingLabels(ctx);return{intent,text:`A comparação ainda não foi concluída${missing.length?'. Faltam: '+missing.join(', '):''}. Continue o fluxo principal; este chat não altera nem finaliza a análise.`,meta:contextual};}
+    const reasons=(ctx.result.fatores||[]).slice(0,4);
+    const warnings=[...(ctx.result.conflitos||[]),...(ctx.result.alertas||[])].slice(0,2);
+    let text=`O motor marcou: ${ctx.result.resultado}.\nCaminho destacado: ${faqWinnerLabel(ctx.result)}.`;
+    if(reasons.length)text+=`\nFatores usados: ${reasons.join(' ')}`;
+    if(warnings.length)text+=`\nRessalvas: ${warnings.join(' ')}`;
+    text+=`\nPróximo passo: ${ctx.nextAction}\nÉ uma comparação heurística do protótipo, não autorização operacional.`;
+    return{intent,text,meta:contextual};
+  }
+  if(intent==='operation_documents'){
+    if(!ctx.active)return{intent,text:'Nenhuma operação está ativa. Como referência geral, Invoice, Packing List e conhecimento de carga são documentos frequentes, mas a lista correta varia conforme a operação e o tratamento administrativo.',meta:contextual};
+    const list=ctx.documents.length?ctx.documents.map(d=>`• ${d.type}: ${d.status}${d.generated?' (gerado no protótipo)':''}`).join('\n'):'• Nenhum documento registrado nesta operação.';
+    let text=`Documentos em ${ctx.id}:\n${list}`;
+    if(ctx.missingDocuments.length)text+=`\nO pré-check simulado marcou como faltante: ${ctx.missingDocuments.join(', ')}.`;
+    else if(ctx.preCheck)text+='\nO checklist local não marcou falta neste momento, mas isso não equivale a conferência ou liberação oficial.';
+    else text+='\nAinda não houve pré-check local; não posso afirmar que a documentação está completa.';
+    return{intent,text,meta:contextual};
+  }
+  if(intent==='operation_anuence'){
+    if(!ctx.active)return{intent,text:'Não há operação ativa para contextualizar a anuência. Em geral, a aplicabilidade precisa ser confirmada pelo tratamento administrativo e pelos atributos reais da mercadoria.',meta:contextual};
+    const informed=ctx.op.anuencia_prevista||'não informado';
+    const agency=ctx.op.orgao_anuente||'não confirmado';
+    return{intent,text:`Nesta operação, a anuência/fiscalização foi informada como “${informed}” e o órgão aparece como “${agency}”. Isso é dado do usuário ou inferência do protótipo; não confirma exigência, deferimento ou dispensa. Verifique o tratamento administrativo vigente no Portal Único e a orientação do órgão competente.`,meta:contextual};
+  }
+  if(intent==='scale'){
+    if(!ctx.active)return{intent,text:'A escala informa o tamanho da carga usado no cálculo. Um contêiner de 20 pés corresponde, em regra de conversão operacional, a 1 TEU; um de 40 pés, a 2 TEU. Sem quantidade ou TEU, o protótipo deve mostrar apenas referência unitária, não um total.',meta:['Base local','Protótipo']};
+    return{intent,text:ctx.scale.known?`A escala usada nesta operação é ${ctx.scale.label}, equivalente a ${ctx.scale.teus} TEU. O chat apenas lê esse dado; para corrigir a escala, use o fluxo principal da análise.`:'A escala desta operação ainda não foi identificada. Sem quantidade de contêineres, TEU, peso ou volume aplicável, o protótipo não deve apresentar um total como se representasse toda a carga.',meta:contextual};
+  }
+  if(intent==='cost'){
+    if(!ctx.active||!ctx.estimate)return{intent,text:'Ainda não há dados suficientes para explicar uma estimativa desta operação. O protótipo precisa, principalmente, da escala e das condições operacionais; sem escala, apresenta somente uma referência unitária.',meta:contextual};
+    const est=ctx.estimate,d=est.totalDireta||est.unitDireta,r=est.totalRecinto||est.unitRecinto;
+    const basis=est.scale?.known?`para ${est.scale.label} (${est.scale.teus} TEU)`:'por TEU/contêiner equivalente';
+    const factors=[...(est.fatoresD||[]),...(est.fatoresR||[])].filter((v,i,a)=>a.indexOf(v)===i).slice(0,6);
+    let text=`Estimativa demonstrativa ${basis}:\n• Retirada direta: ${formatRange(d)}.\n• Uso de recinto: ${formatRange(r)}.`;
+    if(factors.length)text+=`\nFatores aplicados: ${factors.join(', ')}.`;
+    text+='\nO modelo usa faixas-base heurísticas e multiplicadores do protótipo. Não é tarifário oficial nem custo total da importação; não inclui mercadoria, tributos, frete internacional, seguro, câmbio ou tarifas específicas contratadas.';
+    return{intent,text,meta:['Operação atual','Estimativa do protótipo']};
+  }
+  if(intent==='help')return{intent,text:'Posso explicar DUIMP, retirada direta, recinto, anuência, LPCO, documentos, NCM, escala e limites do protótipo. Se houver uma operação em andamento, também resumo o status, mostro o que falta, explico o resultado e detalho a estimativa — sempre em modo somente leitura.',meta:['Base local','Protótipo']};
+  return{intent,text:'Não encontrei uma resposta segura na base local para essa formulação. Tente perguntar sobre DUIMP, retirada direta, recinto, anuência, documentos, escala, custo ou sobre o status da operação atual. Para regra vigente, exigência por NCM, prazo ou tarifa oficial, confirme na fonte competente.',meta:['Base local','Limite do protótipo']};
+}
+
+function faqThinking(){
+  const box=document.getElementById('faq-body');
+  const wrap=document.createElement('div');wrap.className='faq-msg agent';wrap.id='faq-thinking';wrap.setAttribute('role','status');
+  const bubble=document.createElement('div');bubble.className='faq-bubble faq-loading';bubble.textContent='Consultando a base local…';wrap.appendChild(bubble);box.appendChild(wrap);box.scrollTop=box.scrollHeight;
+}
+function faqSetBusy(busy){
+  faqState.busy=busy;document.getElementById('faq-input').disabled=busy;document.getElementById('faq-send').disabled=busy;
+}
+function faqAsk(question){
+  const q=String(question||'').trim();if(!q||faqState.busy)return;
+  const ctx=getFaqOperationContext();faqSyncOperation(ctx);
+  faqAppend('user',q);faqSetBusy(true);faqThinking();
+  setTimeout(()=>{
+    try{
+      const answer=faqAnswer(q,getFaqOperationContext());
+      document.getElementById('faq-thinking')?.remove();
+      faqAppend('agent',answer.text,answer.meta,answer.intent);
+    }catch(e){
+      document.getElementById('faq-thinking')?.remove();
+      faqAppend('agent','Não consegui montar a resposta local. Tente reformular a pergunta; a análise principal não foi alterada.',['Base local','Protótipo'],'fallback');
+    }finally{
+      faqSetBusy(false);refreshFaqPanel();document.getElementById('faq-input').focus();
+    }
+  },180);
+}
+function faqSubmit(){
+  const input=document.getElementById('faq-input'),q=input.value.trim();if(!q)return;
+  input.value='';faqAsk(q);
+}
+function faqOpen(){
+  const panel=document.getElementById('faq-panel'),toggle=document.getElementById('faq-toggle');
+  panel.classList.add('open');panel.inert=false;panel.setAttribute('aria-hidden','false');toggle.setAttribute('aria-expanded','true');
+  refreshFaqPanel();setTimeout(()=>document.getElementById('faq-input').focus(),30);
+}
+function faqClose(){
+  const panel=document.getElementById('faq-panel'),toggle=document.getElementById('faq-toggle');
+  panel.classList.remove('open');panel.inert=true;panel.setAttribute('aria-hidden','true');toggle.setAttribute('aria-expanded','false');toggle.focus();
+}
+function faqClear(){
+  faqState.messages=[];faqState.lastIntent=null;faqState.operationId=operationCode();
+  try{sessionStorage.removeItem(FAQ_SESSION_KEY)}catch(e){}
+  faqRestoreMessages();faqSaveSession();toast('Conversa do agente limpa.');
+}
+
+faqLoadSession();faqRestoreMessages();window.__faqReady=true;refreshFaqPanel();
+document.getElementById('faq-toggle').addEventListener('click',()=>document.getElementById('faq-panel').classList.contains('open')?faqClose():faqOpen());
+document.getElementById('faq-close').addEventListener('click',faqClose);
+document.getElementById('faq-clear').addEventListener('click',faqClear);
+document.getElementById('faq-send').addEventListener('click',faqSubmit);
+document.getElementById('faq-input').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();faqSubmit()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('faq-panel').classList.contains('open'))faqClose()});
+</script>
+</body>
+</html>

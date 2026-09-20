@@ -68,9 +68,8 @@ As operações são salvas em `localStorage`, usando a chave do v8, sem corte si
 
 Há fallback em memória e exportação de backup se o armazenamento estiver bloqueado, cheio ou inválido. Conteúdo inválido não é sobrescrito. Mudar host/porta/origem cria outro armazenamento do navegador; dados do HTML antigo em `file://` não são importados automaticamente para HTTP.
 
-## Logcomex e LLM
+## LLM
 
-Leia [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md). O navegador comum não possui cliente MCP: a interface mostra **Consulta externa indisponível**. A ponte experimental `window.claude.use('mcp')` do v8 foi preservada somente dentro do adapter. A consulta é iniciada pelo botão **Consultar fonte externa** e não interfere na recomendação do motor.
 
 O agente de dúvidas funciona com **base local**, sem LLM ativo. `LocalKnowledgeProvider`, `LLMProvider` e `OperationContextProvider` separam as responsabilidades. Integração futura com modelo exige implementação de serviço seguro no host/backend; o MVP não inclui uma integração generativa fictícia.
 

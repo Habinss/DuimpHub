@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DUIMP Hub — Agente Operacional</title>
+<link rel="stylesheet" href="./src/styles/base.css">
+<link rel="stylesheet" href="./src/styles/refined.css">
+<link rel="icon" href="data:,">
+</head>
+<body>
+<a class="skip-link" href="#main-content">Pular para o conteúdo</a>
+<div id="app-notice" class="app-notice" role="status" hidden></div>
+<div class="presentation-banner" id="presentation-banner">DEMO · apresentação local · nenhuma transmissão oficial</div>
+<aside class="sidebar">
+  <div class="brand"><div class="brand-mark">DH</div><div><div class="brand-name">DUIMP Hub</div><div class="brand-sub">Agente operacional</div></div></div>
+  <nav class="nav" aria-label="Navegação principal">
+    <button type="button" class="nav-item active" data-view="analysis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v12H8l-4 4z"/><path d="M8 9h8M8 13h5"/></svg>Nova análise</button>
+    <button type="button" class="nav-item" data-view="history"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Minhas análises</button>
+    <button type="button" class="nav-item" data-view="results"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18h16M6 15l4-5 3 3 5-7"/><circle cx="6" cy="15" r="1"/><circle cx="10" cy="10" r="1"/><circle cx="13" cy="13" r="1"/><circle cx="18" cy="6" r="1"/></svg>Resultados</button>
+    <button type="button" class="nav-item" data-view="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19h16M6 16V9M11 16V5M16 16v-4"/></svg>Painel</button>
+  </nav>
+
+  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Alternar tema claro e escuro">
+    <span class="theme-icon" id="theme-icon">☾</span>
+    <span class="theme-label">Aparência</span>
+    <span class="theme-state" id="theme-state">Escuro</span>
+  </button>
+
+  <div class="sidebar-mini"><div class="sidebar-mini-title">Modo do protótipo</div><div class="sidebar-mini-line"><span class="signal"></span> Envio a órgão: simulado</div><div class="sidebar-mini-line"><span class="signal" id="logcomex-signal" style="background:#5C8AF0"></span> <span id="logcomex-status-text">Logcomex: indisponível</span></div><button class="text-btn light" onclick="queryLogcomex()">Consultar fonte externa</button></div>
+  <div class="sidebar-foot">DUIMP Hub · MVP 9<br>O agente pode preparar documentos e simular protocolo, mas não realiza envio oficial neste protótipo.</div>
+</aside>
+
+<main class="main" id="main-content">
+<section class="view active" id="view-analysis">
+  <div class="chat-col">
+    <header class="chat-head">
+      <div><h1>Agente DUIMP Hub</h1><p id="head-sub">Analisa a operação, detecta pendências e ajuda a resolvê-las.</p></div>
+      <div class="actions">
+  <button class="btn" id="new-op-btn">Nova operação</button>
+  <button class="btn primary" id="presentation-btn" onclick="togglePresentationMode()">Modo apresentação</button>
+  <button class="btn soft demo-hide" onclick="runDemo(1)">Demo: retirada</button>
+  <button class="btn amber demo-hide" onclick="runDemo(2)">Demo: pendência</button>
+</div>
+    </header>
+
+    <div class="start-screen" id="start-screen">
+      <div class="start-eyebrow">OPERAÇÃO A OPERAÇÃO</div>
+      <h2>Do contexto à próxima ação.</h2>
+      <p>Organize a importação, encontre pendências e compare os caminhos. A decisão continua com você.</p>
+      <div class="start-actions">
+        <button class="start-action" onclick="startProductAction('analyze')"><div class="start-icon">◎</div><strong>Analisar nova operação</strong><span>Descreva o caso livremente ou responda apenas ao que faltar.</span></button>
+        <button class="start-action" onclick="startProductAction('pendency')"><div class="start-icon">⚠</div><strong>Resolver uma pendência</strong><span>Informe o que travou a operação e o agente verifica documentos e próximos passos.</span></button>
+        <button class="start-action" onclick="startProductAction('history')"><div class="start-icon">↺</div><strong>Consultar operação existente</strong><span>Acesse análises salvas, status, pendências e resultados.</span></button>
+        <button class="start-action" onclick="startProductAction('documents')"><div class="start-icon">▤</div><strong>Adicionar documentos</strong><span>Associe Invoice, Packing List, BL e outros arquivos à operação.</span></button>
+      </div>
+      <div class="flow-ribbon"><span>01 Contexto</span><span>02 Documentos</span><span>03 Resolução</span><span>04 Cenários</span></div><div class="start-demo">
+        <span class="start-demo-label">Para apresentar:</span>
+        <button class="btn green" onclick="runDemo(3)">Iniciar demo de 2 minutos</button>
+        <button class="btn soft" onclick="runDemo(1)">Demo simples</button>
+      </div>
+    </div>
+
+    <div class="freeform-box" id="freeform-box" style="display:none">
+      <div class="freeform-top">
+        <div class="freeform-title">Descreva a operação do seu jeito</div>
+        <span class="badge-mini engine">Motor · extração local</span>
+      </div>
+      <div class="freeform-sub">O agente tenta extrair NCM, urgência, órgão, transporte, janela e pendências; depois pergunta apenas o que estiver faltando.</div>
+      <div class="freeform-row">
+        <textarea aria-label="Descrição livre da operação" id="freeform-operation" placeholder="Ex.: Tenho uma importação urgente de medicamento NCM 30049099, transporte programado, aguardando ANVISA e ainda não sei se há janela no terminal."></textarea>
+        <button class="btn primary" id="freeform-analyze-btn">Analisar texto</button>
+      </div>
+      <div class="quick-guided"><span>Ou complete o contexto:</span><button class="btn" id="guided-start-btn">Responder perguntas</button></div>
+    </div>
+
+    <div class="chat-body" id="chat-body" role="log" aria-live="polite"></div>
+    <div class="chat-input-row"><input aria-label="Resposta ao agente operacional" id="free-input" type="text" placeholder="Responda ou digite uma observação..." disabled><button id="send-btn" disabled>Enviar</button></div>
+  </div>
+
+  <aside class="ctx-col">
+    <div class="ctx-section">
+      <div class="ctx-title">Status da operação</div>
+      <div id="operation-status-card"></div>
+      <div style="margin-top:9px"><span class="status-pill wait" id="status-pill"><span class="dot"></span>Aguardando dados</span></div>
+    </div>
+    <div class="ctx-section"><div class="ctx-title section-heading">Contexto da operação <button class="text-btn" onclick="editOperation()">Editar</button></div><div id="ctx-fields"><div class="ctx-empty">Nenhum dado coletado ainda.</div></div></div>
+    <div class="ctx-section">
+      <div class="ctx-title">Documentos e pendências</div>
+      <div class="doc-actions"><button class="btn" id="attach-doc-btn">＋ Adicionar documento</button><button class="btn soft" id="analyze-docs-btn">Analisar documentos</button><input id="doc-input" type="file" multiple hidden></div>
+      <div id="doc-list" class="doc-list"><div class="ctx-empty">Nenhum documento adicionado.</div></div>
+      <div id="pendency-box"></div>
+    </div>
+    <div class="ctx-section"><div class="ctx-title">Etapas da operação</div><div id="ctx-tools">
+      <div class="tool-chip" data-tool="docs"><span class="mark"></span>Leitura documental</div>
+      <div class="tool-chip" data-tool="anuencia"><span class="mark"></span>Pré-check simulado</div>
+      <div class="tool-chip" data-tool="gerar"><span class="mark"></span>Preparação do rascunho</div>
+      <div class="tool-chip" data-tool="protocolo"><span class="mark"></span>Protocolo simulado</div>
+      <div class="tool-chip" data-tool="logcomex"><span class="mark"></span>Consulta Logcomex</div>
+      <div class="tool-chip" data-tool="custos"><span class="mark"></span>Subtotal por tarifa</div>
+      <div class="tool-chip" data-tool="motor"><span class="mark"></span>Comparação operacional</div>
+    </div></div>
+    <div class="ctx-section"><div class="ctx-title">Linha de ação do agente</div><div id="ctx-action-log" class="action-log"><div class="ctx-empty">Nenhuma ação executada.</div></div></div>
+    <div class="ctx-section" style="border-bottom:none"><div class="ctx-title">Fontes utilizadas</div><div id="ctx-sources"><div class="ctx-empty">—</div></div></div>
+  </aside>
+</section>
+
+<section class="view" id="view-history"><div class="page-view"><header class="page-head"><div><h2>Minhas análises</h2><p>Histórico salvo neste navegador.</p></div><button class="btn primary" onclick="switchView('analysis');resetChat(true)">＋ Nova análise</button></header><div class="page-body" id="history-body"></div></div></section>
+
+<section class="view" id="view-results"><div class="page-view">
+  <header class="page-head">
+    <div><h2>Resultados</h2><p>Compare custo, velocidade, risco operacional e o melhor equilíbrio operacional.</p></div>
+    <div class="actions">
+      <button class="btn" onclick="switchView('analysis')">Voltar à operação</button>
+      <button class="btn" onclick="exportSummaryReport()">Exportar resumo</button>
+      <button class="btn primary" onclick="reanalyzeAndShowResults()">Reanalisar</button>
+    </div>
+  </header>
+  <div class="page-body" id="results-body"><div class="empty-card">Conclua uma análise para visualizar as opções.</div></div>
+</div></section>
+<section class="view" id="view-dashboard"><div class="page-view"><header class="page-head"><div><h2>Painel operacional</h2><p>Resumo das operações salvas no protótipo.</p></div><button class="btn" onclick="renderDashboard()">Atualizar</button></header><div class="page-body" id="dashboard-body"></div></div></section>
+</main>
+
+<div class="modal-backdrop" id="doc-modal" role="dialog" aria-modal="true" aria-labelledby="doc-modal-title" tabindex="-1">
+  <div class="modal">
+    <div class="modal-head"><h3 id="doc-modal-title">Revisão do documento preparado</h3><button class="btn" onclick="closeDocModal()">Fechar</button></div>
+    <div class="modal-body"><div id="doc-preview" class="doc-preview"></div><label class="review-check"><input type="checkbox" id="review-confirm"> Revisei os dados e aprovo este rascunho demonstrativo.</label></div>
+    <div class="modal-foot"><button class="btn" onclick="closeDocModal()">Voltar para edição</button><button id="approve-document" class="btn green" onclick="approveAndSendDocument()" disabled>Aprovar e simular envio</button></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<div id="edit-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="edit-title" tabindex="-1"><div class="modal"><div class="modal-head"><h3 id="edit-title">Editar contexto da operação</h3><button class="btn" onclick="closeEditModal()">Fechar</button></div><form id="edit-form"><div class="modal-body" id="edit-fields"></div><div class="modal-foot"><button class="btn primary" type="submit">Salvar contexto e reanalisar</button></div></form></div></div>
+
+<button id="faq-toggle" class="faq-toggle" type="button" aria-label="Abrir agente de dúvidas" aria-controls="faq-panel" aria-expanded="false">
+  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5H6l-3 3v-3.5A8.38 8.38 0 0 1 3.5 3.5h9A8.38 8.38 0 0 1 21 11.5z"/></svg>
+  <span class="faq-toggle-copy">Agente de dúvidas<small>offline · base local</small></span>
+  <span class="faq-online-dot" aria-hidden="true"></span>
+</button>
+<aside class="faq-panel" id="faq-panel" role="dialog" aria-modal="false" aria-labelledby="faq-title" aria-hidden="true" inert>
+  <div class="faq-head">
+    <div class="faq-head-main">
+      <div class="faq-kicker">Canal separado da análise</div>
+      <b id="faq-title">Agente de dúvidas</b>
+      <span>Consulta a base local e lê a operação atual sem alterar o fluxo.</span>
+    </div>
+    <div class="faq-head-actions">
+      <button id="faq-clear" class="faq-icon-btn" type="button" aria-label="Limpar memória da conversa" title="Limpar conversa">↺</button>
+      <button id="faq-close" class="faq-icon-btn" type="button" aria-label="Fechar agente de dúvidas" title="Fechar">✕</button>
+    </div>
+  </div>
+  <div class="faq-status-row" aria-label="Modo de funcionamento">
+    <span class="faq-status-badge"><span class="faq-online-dot" aria-hidden="true"></span>Base local</span>
+    <span class="faq-status-badge context">Contexto ao vivo</span>
+    <span class="faq-status-badge context">Memória da sessão</span>
+  </div>
+  <div class="faq-context" id="faq-context"></div>
+  <div class="faq-quick-wrap">
+    <div class="faq-quick-title">Perguntas rápidas</div>
+    <div class="faq-quick" id="faq-quick"></div>
+  </div>
+  <div class="faq-body" id="faq-body" role="log" aria-live="polite" aria-relevant="additions"></div>
+  <div class="faq-composer">
+    <div class="faq-input-row">
+      <input id="faq-input" type="text" maxlength="500" autocomplete="off" aria-label="Digite sua dúvida" placeholder="Pergunte sobre DUIMP ou sobre a operação...">
+      <button id="faq-send" type="button">Enviar</button>
+    </div>
+    <div class="faq-composer-hint"><span>Enter para enviar</span><span>Não altera a análise</span></div>
+  </div>
+  <div class="faq-disclaimer"><b>Protótipo:</b> respostas e estimativas locais apoiam a decisão, mas não são consulta oficial, liberação, anuência ou cotação.</div>
+</aside>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
